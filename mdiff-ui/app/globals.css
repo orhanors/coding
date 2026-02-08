@@ -1,0 +1,340 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* mdiff Dark Theme (Default) — Futuristic Minimal with Electric Violet */
+
+    /* Base — deep cool grays with violet undertone */
+    --bg-primary: #09090b;
+    --bg-secondary: #0f0f14;
+    --bg-tertiary: #16161e;
+    --bg-hover: #1e1e2a;
+    --bg-active: #262636;
+    --bg-surface: #121218;
+
+    /* Borders — barely there */
+    --border-subtle: rgba(255, 255, 255, 0.04);
+    --border-default: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
+
+    /* Text */
+    --text-primary: #ededf0;
+    --text-secondary: #8b8b9e;
+    --text-muted: #4e4e64;
+    --text-inverse: #09090b;
+
+    /* Accent — Electric Violet */
+    --accent-primary: #a855f7;
+    --accent-hover: #9333ea;
+    --accent-muted: rgba(168, 85, 247, 0.12);
+    --accent-subtle: rgba(168, 85, 247, 0.06);
+    --accent-glow: rgba(168, 85, 247, 0.25);
+
+    /* Semantic */
+    --success: #34d399;
+    --success-muted: rgba(52, 211, 153, 0.10);
+    --warning: #fbbf24;
+    --warning-muted: rgba(251, 191, 36, 0.10);
+    --error: #f87171;
+    --error-muted: rgba(248, 113, 113, 0.10);
+    --info: #60a5fa;
+    --info-muted: rgba(96, 165, 250, 0.10);
+
+    /* Diff colors */
+    --diff-added-bg: rgba(52, 211, 153, 0.08);
+    --diff-added-border: rgba(52, 211, 153, 0.30);
+    --diff-added-text: #6ee7b7;
+    --diff-removed-bg: rgba(248, 113, 113, 0.08);
+    --diff-removed-border: rgba(248, 113, 113, 0.30);
+    --diff-removed-text: #fca5a5;
+    --diff-modified-bg: rgba(168, 85, 247, 0.08);
+    --diff-modified-border: rgba(168, 85, 247, 0.30);
+
+    /* Pipeline stage colors */
+    --stage-adr: #a78bfa;
+    --stage-prd: #c084fc;
+    --stage-excalidraw: #f9a8d4;
+    --stage-implement: #34d399;
+
+    /* Agent activity */
+    --agent-pulse: rgba(168, 85, 247, 0.40);
+    --agent-stream: #a855f7;
+
+    /* shadcn/ui HSL variable mappings */
+    --background: 240 10% 3.7%;
+    --foreground: 240 6% 93.5%;
+    --card: 240 11% 7%;
+    --card-foreground: 240 6% 93.5%;
+    --popover: 240 10% 10%;
+    --popover-foreground: 240 6% 93.5%;
+    --primary: 271 91% 65%;
+    --primary-foreground: 240 10% 3.7%;
+    --secondary: 240 11% 10%;
+    --secondary-foreground: 240 6% 93.5%;
+    --muted: 240 8% 14%;
+    --muted-foreground: 240 9% 53%;
+    --accent: 271 91% 65%;
+    --accent-foreground: 240 10% 3.7%;
+    --destructive: 0 84% 68%;
+    --destructive-foreground: 240 10% 3.7%;
+    --border: 240 6% 14%;
+    --input: 240 6% 14%;
+    --ring: 271 91% 65%;
+    --radius: 0.5rem;
+
+    --chart-1: 271 91% 65%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 271 70% 76%;
+    --chart-4: 330 80% 60%;
+    --chart-5: 142 60% 60%;
+
+    --sidebar-background: 240 11% 7%;
+    --sidebar-foreground: 240 6% 93.5%;
+    --sidebar-primary: 271 91% 65%;
+    --sidebar-primary-foreground: 240 10% 3.7%;
+    --sidebar-accent: 240 11% 13%;
+    --sidebar-accent-foreground: 240 6% 93.5%;
+    --sidebar-border: 240 6% 14%;
+    --sidebar-ring: 271 91% 65%;
+  }
+
+  .light {
+    /* mdiff Light Theme */
+
+    /* Base */
+    --bg-primary: #fafafa;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f4f4f5;
+    --bg-hover: #e4e4e7;
+    --bg-active: #d4d4d8;
+    --bg-surface: #f0f0f2;
+
+    /* Borders */
+    --border-subtle: rgba(0, 0, 0, 0.04);
+    --border-default: rgba(0, 0, 0, 0.08);
+    --border-strong: rgba(0, 0, 0, 0.16);
+
+    /* Text */
+    --text-primary: #18181b;
+    --text-secondary: #71717a;
+    --text-muted: #a1a1aa;
+    --text-inverse: #fafafa;
+
+    /* Accent — Electric Violet (darkened for contrast) */
+    --accent-primary: #7c3aed;
+    --accent-hover: #6d28d9;
+    --accent-muted: rgba(124, 58, 237, 0.08);
+    --accent-subtle: rgba(124, 58, 237, 0.04);
+    --accent-glow: rgba(124, 58, 237, 0.15);
+
+    /* Semantic */
+    --success: #16a34a;
+    --success-muted: rgba(22, 163, 74, 0.08);
+    --warning: #d97706;
+    --warning-muted: rgba(217, 119, 6, 0.08);
+    --error: #dc2626;
+    --error-muted: rgba(220, 38, 38, 0.08);
+    --info: #2563eb;
+    --info-muted: rgba(37, 99, 235, 0.08);
+
+    /* Diff colors */
+    --diff-added-bg: rgba(22, 163, 74, 0.06);
+    --diff-added-border: rgba(22, 163, 74, 0.25);
+    --diff-added-text: #166534;
+    --diff-removed-bg: rgba(220, 38, 38, 0.06);
+    --diff-removed-border: rgba(220, 38, 38, 0.25);
+    --diff-removed-text: #991b1b;
+    --diff-modified-bg: rgba(124, 58, 237, 0.06);
+    --diff-modified-border: rgba(124, 58, 237, 0.25);
+
+    /* Pipeline stage colors */
+    --stage-adr: #7c3aed;
+    --stage-prd: #9333ea;
+    --stage-excalidraw: #db2777;
+    --stage-implement: #16a34a;
+
+    /* Agent activity */
+    --agent-pulse: rgba(124, 58, 237, 0.25);
+    --agent-stream: #7c3aed;
+
+    /* shadcn/ui HSL variable mappings */
+    --background: 0 0% 98%;
+    --foreground: 240 6% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 6% 10%;
+    --popover: 0 0% 96%;
+    --popover-foreground: 240 6% 10%;
+    --primary: 263 83% 57%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 240 6% 10%;
+    --muted: 0 0% 93%;
+    --muted-foreground: 240 4% 46%;
+    --accent: 263 83% 57%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 263 83% 57%;
+
+    --chart-1: 263 83% 57%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 263 70% 50%;
+    --chart-4: 330 80% 55%;
+    --chart-5: 142 60% 40%;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 240 6% 10%;
+    --sidebar-primary: 263 83% 57%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 240 6% 10%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 263 83% 57%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+  }
+}
+
+/* Animation keyframes */
+@keyframes agent-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 var(--agent-pulse);
+  }
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes blink-cursor {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes slide-from-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-from-bottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes count-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes timeline-entry-in {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Accessibility — Focus rings */
+@layer base {
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Utility classes */
+@layer utilities {
+  .backdrop-blur-bar {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted)) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted));
+    border-radius: 3px;
+  }
+}
