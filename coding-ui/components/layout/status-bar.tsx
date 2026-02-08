@@ -18,18 +18,18 @@ const statusLabels: Record<string, string> = {
 }
 
 const statusColors: Record<string, string> = {
-  running: "var(--spec-accent)",
-  paused: "var(--spec-warning)",
-  completed: "var(--spec-success)",
-  failed: "var(--spec-error)",
-  idle: "var(--spec-text-muted)",
+  running: "var(--ac-accent)",
+  paused: "var(--ac-warning)",
+  completed: "var(--ac-success)",
+  failed: "var(--ac-error)",
+  idle: "var(--ac-text-muted)",
 }
 
 export function StatusBar({ pipeline, integrations, eventCount }: StatusBarProps) {
   const connectedCount = integrations.filter((i) => i.status === "connected").length
 
   return (
-    <footer className="flex h-7 shrink-0 items-center border-t border-[var(--spec-border-subtle)] bg-[var(--spec-bg-secondary)] px-4 text-2xs text-[var(--spec-text-muted)]">
+    <footer className="flex h-7 shrink-0 items-center border-t border-[var(--ac-border-subtle)] bg-[var(--ac-bg-secondary)] px-4 text-2xs text-[var(--ac-text-muted)]">
       <div className="flex items-center gap-1.5">
         <Circle
           className="h-2 w-2"
@@ -41,17 +41,17 @@ export function StatusBar({ pipeline, integrations, eventCount }: StatusBarProps
         </span>
       </div>
 
-      <span className="mx-3 text-[var(--spec-border-default)]">|</span>
+      <span className="mx-3 text-[var(--ac-border-default)]">|</span>
 
       <span>Events: {eventCount}</span>
 
-      <span className="mx-3 text-[var(--spec-border-default)]">|</span>
+      <span className="mx-3 text-[var(--ac-border-default)]">|</span>
 
       <div className="flex items-center gap-1.5">
         {connectedCount > 0 ? (
-          <Wifi className="h-3 w-3 text-[var(--spec-success)]" />
+          <Wifi className="h-3 w-3 text-[var(--ac-success)]" />
         ) : (
-          <WifiOff className="h-3 w-3 text-[var(--spec-text-muted)]" />
+          <WifiOff className="h-3 w-3 text-[var(--ac-text-muted)]" />
         )}
         <span>{connectedCount}/{integrations.length} integrations</span>
       </div>

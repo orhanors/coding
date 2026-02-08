@@ -1,14 +1,14 @@
-# ADR-0001: UI Specifications — SPEC Platform
+# ADR-0001: UI Specifications — Agentic Coding Platform
 
 ## Status
 Proposed (2026-02-08)
 
 ## Context
-This document defines the UI specifications for the **SPEC Platform** — an architecture-first agentic development platform that drives SPEC-driven development using the ADR → PRD → Implementation pipeline. The platform integrates with Excalidraw for live architecture visualization, streams every pipeline event to connected clients (Discord, Telegram, Slack, native web UI), and uses Vercel AI SDK 6 for all AI-powered components.
+This document defines the UI specifications for the **Agentic Coding Platform** — an architecture-first agentic development platform that drives SPEC-driven development using the ADR → PRD → Implementation pipeline. The platform integrates with Excalidraw for live architecture visualization, streams every pipeline event to connected clients (Discord, Telegram, Slack, native web UI), and uses Vercel AI SDK 6 for all AI-powered components.
 
 The platform's core loop is: **create-adr → update Excalidraw architecture → create-prd-from-adr → implement-prd**. Each step produces real-time events that the UI must visualize as a live stream. Users need to see architecture changes unfold in real-time, browse the full history of ADRs/PRDs/PRD-logs, track changes like a git-style changelog, and manage integrations with external messaging platforms.
 
-The existing codebase is an Excalidraw monorepo (React 19 + Vite + TypeScript). The SPEC Platform UI will be built as a **new Next.js 15 application** alongside the existing Excalidraw workspace, embedding the Excalidraw component for architecture diagram visualization.
+The existing codebase is an Excalidraw monorepo (React 19 + Vite + TypeScript). The Agentic Coding Platform UI will be built as a **new Next.js 15 application** alongside the existing Excalidraw workspace, embedding the Excalidraw component for architecture diagram visualization.
 
 ---
 
@@ -163,7 +163,7 @@ A dark, dense, information-rich interface inspired by professional developer too
 ### Shell Layout
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
-│  ◉ SPEC Platform    [Pipeline ▾]  [Search ⌘K]         🌓  👤  ⚙️      │
+│  ◉ Agentic Coding Platform    [Pipeline ▾]  [Search ⌘K]         🌓  👤  ⚙️      │
 │  Top Bar (48px, fixed)                                                  │
 ├────────────┬─────────────────────────────────────────────────────────────┤
 │            │                                                             │
@@ -207,7 +207,7 @@ A dark, dense, information-rich interface inspired by professional developer too
 
 ### 1. Dashboard (`/`)
 
-**Purpose**: High-level overview of the entire SPEC platform — active pipelines, recent architecture changes, document counts, integration health, and key metrics.
+**Purpose**: High-level overview of the entire Agentic Coding Platform — active pipelines, recent architecture changes, document counts, integration health, and key metrics.
 
 **Layout**:
 ```
@@ -1093,6 +1093,6 @@ spec-platform/
 - Supporting both dark and light themes doubles the design token maintenance surface
 
 ### Trade-offs
-- **Zustand over Jotai**: While the existing Excalidraw codebase uses Jotai, the SPEC Platform uses Zustand for simpler store patterns that align better with the pipeline/document/event state model. The Excalidraw embed manages its own internal Jotai state independently.
+- **Zustand over Jotai**: While the existing Excalidraw codebase uses Jotai, the Agentic Coding Platform uses Zustand for simpler store patterns that align better with the pipeline/document/event state model. The Excalidraw embed manages its own internal Jotai state independently.
 - **SSE over WebSocket**: Server-Sent Events chosen over WebSocket because the data flow is predominantly server→client (pipeline events). SSE is simpler to implement, works through proxies, and auto-reconnects. WebSocket would be needed only if we add collaborative editing later.
-- **Next.js 15 App Router over Vite SPA**: Despite the existing Vite setup in the monorepo, the SPEC Platform benefits from Next.js API routes (for SSE endpoints, webhook handlers, AI SDK integration) and server components (for initial document loading).
+- **Next.js 15 App Router over Vite SPA**: Despite the existing Vite setup in the monorepo, the Agentic Coding Platform benefits from Next.js API routes (for SSE endpoints, webhook handlers, AI SDK integration) and server components (for initial document loading).

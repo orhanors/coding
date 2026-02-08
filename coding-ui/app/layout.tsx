@@ -16,8 +16,8 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "SPEC Platform",
-  description: "Architecture-first agentic development platform. ADR to PRD to Implementation pipeline.",
+  title: "agentic",
+  description: "Agentic coding platform. Architecture-driven development with live Excalidraw diffs.",
 }
 
 export const viewport: Viewport = {

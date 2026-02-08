@@ -76,3 +76,62 @@ export interface HistoryEntry {
 }
 
 export type EventSubscriptions = Record<string, Record<string, boolean>>
+
+// Architecture types
+
+export interface ArchitectureNode {
+  id: string
+  label: string
+  type: "service" | "database" | "cache" | "queue" | "gateway"
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+export interface ArchitectureEdge {
+  id: string
+  from: string
+  to: string
+  label?: string
+  style: "solid" | "dashed"
+}
+
+export interface ArchitectureSnapshot {
+  nodes: ArchitectureNode[]
+  edges: ArchitectureEdge[]
+}
+
+export interface ArchitectureCommit {
+  id: string
+  hash: string
+  message: string
+  author: string
+  timestamp: Date
+  adrRef: string
+  snapshot: ArchitectureSnapshot
+  stats: { nodes: number; edges: number }
+}
+
+export interface NodeDiff {
+  node: ArchitectureNode
+  status: "added" | "removed" | "modified" | "unchanged"
+}
+
+export interface EdgeDiff {
+  edge: ArchitectureEdge
+  status: "added" | "removed" | "modified" | "unchanged"
+}
+
+export interface ArchitectureDiff {
+  nodes: NodeDiff[]
+  edges: EdgeDiff[]
+  stats: {
+    nodesAdded: number
+    nodesRemoved: number
+    nodesModified: number
+    edgesAdded: number
+    edgesRemoved: number
+    edgesModified: number
+  }
+}

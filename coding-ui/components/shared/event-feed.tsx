@@ -21,11 +21,11 @@ const stageLabels: Record<string, string> = {
 }
 
 const stageColors: Record<string, string> = {
-  adr: "var(--spec-pipeline-adr)",
-  excalidraw: "var(--spec-pipeline-excalidraw)",
-  prd: "var(--spec-pipeline-prd)",
-  implement: "var(--spec-pipeline-implement)",
-  system: "var(--spec-text-muted)",
+  adr: "var(--ac-pipeline-adr)",
+  excalidraw: "var(--ac-pipeline-excalidraw)",
+  prd: "var(--ac-pipeline-prd)",
+  implement: "var(--ac-pipeline-implement)",
+  system: "var(--ac-text-muted)",
 }
 
 const typeIcons: Record<string, React.ReactNode> = {
@@ -57,11 +57,11 @@ export function EventFeed({ events, maxHeight = "300px", compact = false }: Even
         <div
           key={event.id}
           className={cn(
-            "flex items-start gap-2 border-b border-[var(--spec-border-subtle)] animate-slide-in",
+            "flex items-start gap-2 border-b border-[var(--ac-border-subtle)] animate-slide-in",
             compact ? "px-2 py-1" : "px-3 py-2"
           )}
         >
-          <span className="shrink-0 font-mono text-2xs text-[var(--spec-text-muted)] pt-0.5">
+          <span className="shrink-0 font-mono text-2xs text-[var(--ac-text-muted)] pt-0.5">
             {formatTime(event.timestamp)}
           </span>
           <span
@@ -75,11 +75,11 @@ export function EventFeed({ events, maxHeight = "300px", compact = false }: Even
           </span>
           <span
             className="shrink-0 pt-0.5"
-            style={{ color: event.type === "failed" ? "var(--spec-error)" : stageColors[event.stage] }}
+            style={{ color: event.type === "failed" ? "var(--ac-error)" : stageColors[event.stage] }}
           >
             {typeIcons[event.type]}
           </span>
-          <span className="text-xs text-[var(--spec-text-secondary)] leading-relaxed">
+          <span className="text-xs text-[var(--ac-text-secondary)] leading-relaxed">
             {event.message}
           </span>
         </div>

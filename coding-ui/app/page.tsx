@@ -20,9 +20,9 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-6 p-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-[var(--spec-text-primary)]">Dashboard</h1>
+        <h1 className="text-lg font-semibold text-[var(--ac-text-primary)]">Dashboard</h1>
         <Button
-          className="gap-2 bg-[var(--spec-accent)] text-[var(--spec-bg-primary)] hover:bg-[var(--spec-accent-secondary)]"
+          className="gap-2 bg-[var(--ac-accent)] text-[var(--ac-bg-primary)] hover:bg-[var(--ac-accent-secondary)]"
           size="sm"
         >
           <Play className="h-3.5 w-3.5" />
@@ -61,8 +61,8 @@ export default function DashboardPage() {
       </div>
 
       {/* Active Pipeline */}
-      <div className="rounded-lg border border-[var(--spec-border-default)] bg-[var(--spec-bg-secondary)] p-4">
-        <h2 className="mb-4 text-sm font-medium text-[var(--spec-text-primary)]">
+      <div className="rounded-lg border border-[var(--ac-border-default)] bg-[var(--ac-bg-secondary)] p-4">
+        <h2 className="mb-4 text-sm font-medium text-[var(--ac-text-primary)]">
           Active Pipeline
         </h2>
         <PipelineProgress steps={mockPipelineRun.steps} currentStep={mockPipelineRun.currentStep} />
@@ -71,9 +71,9 @@ export default function DashboardPage() {
       {/* Bottom Split: Recent Changes + Live Event Feed */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Recent Architecture Changes */}
-        <div className="rounded-lg border border-[var(--spec-border-default)] bg-[var(--spec-bg-secondary)]">
-          <div className="border-b border-[var(--spec-border-subtle)] px-4 py-3">
-            <h2 className="text-sm font-medium text-[var(--spec-text-primary)]">
+        <div className="rounded-lg border border-[var(--ac-border-default)] bg-[var(--ac-bg-secondary)]">
+          <div className="border-b border-[var(--ac-border-subtle)] px-4 py-3">
+            <h2 className="text-sm font-medium text-[var(--ac-text-primary)]">
               Recent Architecture Changes
             </h2>
           </div>
@@ -81,14 +81,14 @@ export default function DashboardPage() {
         </div>
 
         {/* Live Event Feed */}
-        <div className="rounded-lg border border-[var(--spec-border-default)] bg-[var(--spec-bg-secondary)]">
-          <div className="flex items-center gap-2 border-b border-[var(--spec-border-subtle)] px-4 py-3">
-            <h2 className="text-sm font-medium text-[var(--spec-text-primary)]">
+        <div className="rounded-lg border border-[var(--ac-border-default)] bg-[var(--ac-bg-secondary)]">
+          <div className="flex items-center gap-2 border-b border-[var(--ac-border-subtle)] px-4 py-3">
+            <h2 className="text-sm font-medium text-[var(--ac-text-primary)]">
               Live Event Feed
             </h2>
             <span className="flex h-2 w-2">
-              <span className="absolute inline-flex h-2 w-2 animate-ping rounded-full bg-[var(--spec-accent)] opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--spec-accent)]" />
+              <span className="absolute inline-flex h-2 w-2 animate-ping rounded-full bg-[var(--ac-accent)] opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--ac-accent)]" />
             </span>
           </div>
           <EventFeed events={mockPipelineEvents} maxHeight="340px" />

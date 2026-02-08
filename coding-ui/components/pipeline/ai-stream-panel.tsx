@@ -67,27 +67,27 @@ export function AIStreamPanel() {
   return (
     <div
       ref={containerRef}
-      className="flex-1 overflow-y-auto p-4 font-mono text-xs leading-relaxed text-[var(--spec-text-secondary)] scrollbar-thin"
+      className="flex-1 overflow-y-auto p-4 font-mono text-xs leading-relaxed text-[var(--ac-text-secondary)] scrollbar-thin"
     >
       {displayedContent.split("\n").map((line, i) => {
         if (line.startsWith("## ")) {
           return (
-            <div key={i} className="mt-4 mb-2 text-sm font-semibold text-[var(--spec-text-primary)]">
+            <div key={i} className="mt-4 mb-2 text-sm font-semibold text-[var(--ac-text-primary)]">
               {line.replace("## ", "")}
             </div>
           )
         }
         if (line.startsWith("### ")) {
           return (
-            <div key={i} className="mt-3 mb-1 text-xs font-medium text-[var(--spec-accent)]">
+            <div key={i} className="mt-3 mb-1 text-xs font-medium text-[var(--ac-accent)]">
               {line.replace("### ", "")}
             </div>
           )
         }
         if (line.startsWith("- ")) {
           return (
-            <div key={i} className="pl-4 py-0.5 text-[var(--spec-text-secondary)]">
-              <span className="text-[var(--spec-text-muted)] mr-2">-</span>
+            <div key={i} className="pl-4 py-0.5 text-[var(--ac-text-secondary)]">
+              <span className="text-[var(--ac-text-muted)] mr-2">-</span>
               {line.replace("- ", "")}
             </div>
           )
@@ -102,7 +102,7 @@ export function AIStreamPanel() {
         )
       })}
       {isStreaming && (
-        <span className="inline-block w-2 h-4 bg-[var(--spec-accent)] animate-blink-cursor ml-0.5" />
+        <span className="inline-block w-2 h-4 bg-[var(--ac-accent)] animate-blink-cursor ml-0.5" />
       )}
     </div>
   )

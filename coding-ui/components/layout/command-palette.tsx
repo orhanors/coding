@@ -11,7 +11,7 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command"
-import { LayoutDashboard, Workflow, FileText, Link2, History, Play, Plus, Search } from "lucide-react"
+import { LayoutDashboard, Workflow, Pencil, FileText, Link2, History, Play, Plus, Search } from "lucide-react"
 
 interface CommandPaletteProps {
   open: boolean
@@ -42,6 +42,10 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
           <CommandItem onSelect={() => navigate("/pipeline")}>
             <Workflow className="mr-2 h-4 w-4" />
             Pipeline
+          </CommandItem>
+          <CommandItem onSelect={() => navigate("/architecture")}>
+            <Pencil className="mr-2 h-4 w-4" />
+            Architecture
           </CommandItem>
           <CommandItem onSelect={() => navigate("/documents")}>
             <FileText className="mr-2 h-4 w-4" />

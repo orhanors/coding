@@ -34,7 +34,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-[var(--spec-bg-primary)]">
+    <div className="flex h-screen flex-col overflow-hidden bg-[var(--ac-bg-primary)]">
       <TopBar
         onCommandPaletteOpen={() => setCommandPaletteOpen(true)}
         sidebarCollapsed={sidebarCollapsed}
@@ -44,6 +44,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex flex-1 overflow-hidden">
         <AppSidebar
           collapsed={sidebarCollapsed}
+          onToggle={toggleSidebar}
           recentEvents={mockPipelineEvents}
           documents={mockDocuments}
         />

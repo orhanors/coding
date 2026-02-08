@@ -29,17 +29,17 @@ const platformIcons: Record<string, string> = {
 const statusConfig: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   connected: {
     label: "Connected",
-    color: "var(--spec-success)",
+    color: "var(--ac-success)",
     icon: <Check className="h-3.5 w-3.5" />,
   },
   disconnected: {
     label: "Disconnected",
-    color: "var(--spec-text-muted)",
+    color: "var(--ac-text-muted)",
     icon: <X className="h-3.5 w-3.5" />,
   },
   error: {
     label: "Error",
-    color: "var(--spec-error)",
+    color: "var(--ac-error)",
     icon: <AlertTriangle className="h-3.5 w-3.5" />,
   },
 }
@@ -56,7 +56,7 @@ function formatTime(date: Date) {
 function IntegrationCard({ integration }: { integration: Integration }) {
   const status = statusConfig[integration.status]
   return (
-    <div className="rounded-lg border border-[var(--spec-border-default)] bg-[var(--spec-bg-secondary)] p-4 transition-colors hover:border-[var(--spec-border-strong)]">
+    <div className="rounded-lg border border-[var(--ac-border-default)] bg-[var(--ac-bg-secondary)] p-4 transition-colors hover:border-[var(--ac-border-strong)]">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div
@@ -69,11 +69,11 @@ function IntegrationCard({ integration }: { integration: Integration }) {
             {platformIcons[integration.platform]?.[0]}
           </div>
           <div>
-            <h3 className="text-sm font-medium text-[var(--spec-text-primary)]">
+            <h3 className="text-sm font-medium text-[var(--ac-text-primary)]">
               {platformIcons[integration.platform]}
             </h3>
             {integration.channelName && (
-              <p className="text-2xs text-[var(--spec-text-muted)]">{integration.channelName}</p>
+              <p className="text-2xs text-[var(--ac-text-muted)]">{integration.channelName}</p>
             )}
           </div>
         </div>
@@ -84,16 +84,16 @@ function IntegrationCard({ integration }: { integration: Integration }) {
       </div>
       <div className="flex items-center justify-between">
         {integration.lastDelivery ? (
-          <span className="text-2xs text-[var(--spec-text-muted)]">
+          <span className="text-2xs text-[var(--ac-text-muted)]">
             Last: {formatTime(integration.lastDelivery)}
           </span>
         ) : (
-          <span className="text-2xs text-[var(--spec-text-muted)]">No deliveries</span>
+          <span className="text-2xs text-[var(--ac-text-muted)]">No deliveries</span>
         )}
         <Button
           variant="outline"
           size="sm"
-          className="h-7 text-2xs border-[var(--spec-border-default)] bg-transparent text-[var(--spec-text-secondary)] hover:bg-[var(--spec-bg-hover)] hover:text-[var(--spec-text-primary)]"
+          className="h-7 text-2xs border-[var(--ac-border-default)] bg-transparent text-[var(--ac-text-secondary)] hover:bg-[var(--ac-bg-hover)] hover:text-[var(--ac-text-primary)]"
         >
           {integration.status === "connected" ? "Configure" : "Connect"}
         </Button>
@@ -104,27 +104,27 @@ function IntegrationCard({ integration }: { integration: Integration }) {
 
 function DeliveryRow({ delivery }: { delivery: DeliveryEntry }) {
   return (
-    <div className="flex items-center gap-3 border-b border-[var(--spec-border-subtle)] px-4 py-2 last:border-b-0">
-      <span className="shrink-0 font-mono text-2xs text-[var(--spec-text-muted)]">
+    <div className="flex items-center gap-3 border-b border-[var(--ac-border-subtle)] px-4 py-2 last:border-b-0">
+      <span className="shrink-0 font-mono text-2xs text-[var(--ac-text-muted)]">
         {formatTime(delivery.timestamp)}
       </span>
       <span
         className="shrink-0 rounded px-1.5 py-0.5 text-2xs font-medium uppercase"
         style={{
-          color: delivery.success ? "var(--spec-success)" : "var(--spec-error)",
-          backgroundColor: delivery.success ? "var(--spec-success-muted)" : "var(--spec-error-muted)",
+          color: delivery.success ? "var(--ac-success)" : "var(--ac-error)",
+          backgroundColor: delivery.success ? "var(--ac-success-muted)" : "var(--ac-error-muted)",
         }}
       >
         {delivery.statusCode}
       </span>
-      <span className="shrink-0 text-2xs font-medium text-[var(--spec-text-secondary)] capitalize">
+      <span className="shrink-0 text-2xs font-medium text-[var(--ac-text-secondary)] capitalize">
         {delivery.platform}
       </span>
-      <span className="text-xs text-[var(--spec-text-secondary)] truncate">
+      <span className="text-xs text-[var(--ac-text-secondary)] truncate">
         {delivery.message}
       </span>
       {!delivery.success && (
-        <AlertTriangle className="ml-auto h-3.5 w-3.5 shrink-0 text-[var(--spec-error)]" />
+        <AlertTriangle className="ml-auto h-3.5 w-3.5 shrink-0 text-[var(--ac-error)]" />
       )}
     </div>
   )
@@ -136,12 +136,12 @@ export default function IntegrationsPage() {
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[var(--spec-border-subtle)] px-6 py-3">
-        <h1 className="text-lg font-semibold text-[var(--spec-text-primary)]">Integrations</h1>
+      <div className="flex items-center justify-between border-b border-[var(--ac-border-subtle)] px-6 py-3">
+        <h1 className="text-lg font-semibold text-[var(--ac-text-primary)]">Integrations</h1>
         <Button
           variant="outline"
           size="sm"
-          className="gap-1.5 border-[var(--spec-border-default)] bg-transparent text-[var(--spec-text-secondary)] hover:bg-[var(--spec-bg-hover)] hover:text-[var(--spec-text-primary)]"
+          className="gap-1.5 border-[var(--ac-border-default)] bg-transparent text-[var(--ac-text-secondary)] hover:bg-[var(--ac-bg-hover)] hover:text-[var(--ac-text-primary)]"
         >
           <RefreshCcw className="h-3.5 w-3.5" />
           Refresh
@@ -149,7 +149,7 @@ export default function IntegrationsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-[var(--spec-border-subtle)] px-6">
+      <div className="flex border-b border-[var(--ac-border-subtle)] px-6">
         {(["overview", "deliveries", "subscriptions"] as const).map((tab) => (
           <button
             key={tab}
@@ -157,8 +157,8 @@ export default function IntegrationsPage() {
             className={cn(
               "border-b-2 px-4 py-2.5 text-xs font-medium capitalize transition-colors",
               activeTab === tab
-                ? "border-[var(--spec-accent)] text-[var(--spec-accent)]"
-                : "border-transparent text-[var(--spec-text-muted)] hover:text-[var(--spec-text-secondary)]"
+                ? "border-[var(--ac-accent)] text-[var(--ac-accent)]"
+                : "border-transparent text-[var(--ac-text-muted)] hover:text-[var(--ac-text-secondary)]"
             )}
           >
             {tab}
@@ -177,9 +177,9 @@ export default function IntegrationsPage() {
         )}
 
         {activeTab === "deliveries" && (
-          <div className="rounded-lg border border-[var(--spec-border-default)] bg-[var(--spec-bg-secondary)]">
-            <div className="border-b border-[var(--spec-border-subtle)] px-4 py-3">
-              <h2 className="text-sm font-medium text-[var(--spec-text-primary)]">
+          <div className="rounded-lg border border-[var(--ac-border-default)] bg-[var(--ac-bg-secondary)]">
+            <div className="border-b border-[var(--ac-border-subtle)] px-4 py-3">
+              <h2 className="text-sm font-medium text-[var(--ac-text-primary)]">
                 Recent Deliveries
               </h2>
             </div>
@@ -192,23 +192,23 @@ export default function IntegrationsPage() {
         )}
 
         {activeTab === "subscriptions" && (
-          <div className="rounded-lg border border-[var(--spec-border-default)] bg-[var(--spec-bg-secondary)]">
-            <div className="border-b border-[var(--spec-border-subtle)] px-4 py-3">
-              <h2 className="text-sm font-medium text-[var(--spec-text-primary)]">
+          <div className="rounded-lg border border-[var(--ac-border-default)] bg-[var(--ac-bg-secondary)]">
+            <div className="border-b border-[var(--ac-border-subtle)] px-4 py-3">
+              <h2 className="text-sm font-medium text-[var(--ac-text-primary)]">
                 Event Subscriptions
               </h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[var(--spec-border-subtle)]">
-                    <th className="px-4 py-2 text-left text-2xs font-medium text-[var(--spec-text-muted)]">
+                  <tr className="border-b border-[var(--ac-border-subtle)]">
+                    <th className="px-4 py-2 text-left text-2xs font-medium text-[var(--ac-text-muted)]">
                       Event
                     </th>
                     {mockIntegrations.map((i) => (
                       <th
                         key={i.id}
-                        className="px-4 py-2 text-center text-2xs font-medium text-[var(--spec-text-muted)] capitalize"
+                        className="px-4 py-2 text-center text-2xs font-medium text-[var(--ac-text-muted)] capitalize"
                       >
                         {i.platform}
                       </th>
@@ -219,9 +219,9 @@ export default function IntegrationsPage() {
                   {Object.entries(mockSubscriptions).map(([event, subs]) => (
                     <tr
                       key={event}
-                      className="border-b border-[var(--spec-border-subtle)] last:border-b-0"
+                      className="border-b border-[var(--ac-border-subtle)] last:border-b-0"
                     >
-                      <td className="px-4 py-2 text-xs text-[var(--spec-text-secondary)]">
+                      <td className="px-4 py-2 text-xs text-[var(--ac-text-secondary)]">
                         {event}
                       </td>
                       {mockIntegrations.map((i) => (
@@ -230,12 +230,12 @@ export default function IntegrationsPage() {
                             <Circle
                               className="mx-auto h-2.5 w-2.5"
                               style={{
-                                color: "var(--spec-accent)",
-                                fill: "var(--spec-accent)",
+                                color: "var(--ac-accent)",
+                                fill: "var(--ac-accent)",
                               }}
                             />
                           ) : (
-                            <Circle className="mx-auto h-2.5 w-2.5 text-[var(--spec-border-default)]" />
+                            <Circle className="mx-auto h-2.5 w-2.5 text-[var(--ac-border-default)]" />
                           )}
                         </td>
                       ))}

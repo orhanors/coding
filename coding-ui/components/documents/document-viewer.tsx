@@ -18,11 +18,11 @@ const statusLabels: Record<string, string> = {
 }
 
 const statusVariants: Record<string, string> = {
-  proposed: "bg-[var(--spec-accent-muted)] text-[var(--spec-accent)] border-[var(--spec-accent)]",
-  active: "bg-[var(--spec-accent-muted)] text-[var(--spec-accent)] border-[var(--spec-accent)]",
-  accepted: "bg-[var(--spec-success-muted)] text-[var(--spec-success)] border-[var(--spec-success)]",
-  completed: "bg-[var(--spec-success-muted)] text-[var(--spec-success)] border-[var(--spec-success)]",
-  deprecated: "bg-[var(--spec-bg-surface)] text-[var(--spec-text-muted)] border-[var(--spec-border-default)]",
+  proposed: "bg-[var(--ac-accent-muted)] text-[var(--ac-accent)] border-[var(--ac-accent)]",
+  active: "bg-[var(--ac-accent-muted)] text-[var(--ac-accent)] border-[var(--ac-accent)]",
+  accepted: "bg-[var(--ac-success-muted)] text-[var(--ac-success)] border-[var(--ac-success)]",
+  completed: "bg-[var(--ac-success-muted)] text-[var(--ac-success)] border-[var(--ac-success)]",
+  deprecated: "bg-[var(--ac-bg-surface)] text-[var(--ac-text-muted)] border-[var(--ac-border-default)]",
 }
 
 function formatDate(date: Date) {
@@ -40,8 +40,8 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
     return (
       <div className="flex flex-1 items-center justify-center">
         <div className="text-center">
-          <p className="text-sm text-[var(--spec-text-muted)]">Select a document to view</p>
-          <p className="mt-1 text-2xs text-[var(--spec-text-muted)]">
+          <p className="text-sm text-[var(--ac-text-muted)]">Select a document to view</p>
+          <p className="mt-1 text-2xs text-[var(--ac-text-muted)]">
             Choose from the document tree on the left
           </p>
         </div>
@@ -52,9 +52,9 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
   return (
     <div className="flex flex-1 flex-col overflow-y-auto scrollbar-thin">
       {/* Document header */}
-      <div className="border-b border-[var(--spec-border-subtle)] px-6 py-4">
+      <div className="border-b border-[var(--ac-border-subtle)] px-6 py-4">
         <div className="flex items-center gap-3 mb-2">
-          <h2 className="text-base font-semibold text-[var(--spec-text-primary)]">
+          <h2 className="text-base font-semibold text-[var(--ac-text-primary)]">
             {document.name}
           </h2>
           <span
@@ -63,7 +63,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
             {statusLabels[document.status]}
           </span>
         </div>
-        <div className="flex items-center gap-4 text-2xs text-[var(--spec-text-muted)]">
+        <div className="flex items-center gap-4 text-2xs text-[var(--ac-text-muted)]">
           <span className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
             {formatDate(document.lastModified)}
@@ -82,7 +82,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
             {document.content.split("\n").map((line, i) => {
               if (line.startsWith("# ")) {
                 return (
-                  <h1 key={i} className="mb-3 mt-4 text-lg font-bold text-[var(--spec-text-primary)]">
+                  <h1 key={i} className="mb-3 mt-4 text-lg font-bold text-[var(--ac-text-primary)]">
                     {line.replace("# ", "")}
                   </h1>
                 )
@@ -91,7 +91,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
                 return (
                   <h2
                     key={i}
-                    className="mb-2 mt-4 text-sm font-semibold text-[var(--spec-text-primary)]"
+                    className="mb-2 mt-4 text-sm font-semibold text-[var(--ac-text-primary)]"
                   >
                     {line.replace("## ", "")}
                   </h2>
@@ -100,10 +100,10 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
               if (line.startsWith("- **")) {
                 const parts = line.replace("- **", "").split("**")
                 return (
-                  <div key={i} className="flex gap-1 py-0.5 pl-2 text-[var(--spec-text-secondary)]">
-                    <span className="text-[var(--spec-text-muted)]">-</span>
+                  <div key={i} className="flex gap-1 py-0.5 pl-2 text-[var(--ac-text-secondary)]">
+                    <span className="text-[var(--ac-text-muted)]">-</span>
                     <span>
-                      <span className="font-semibold text-[var(--spec-text-primary)]">
+                      <span className="font-semibold text-[var(--ac-text-primary)]">
                         {parts[0]}
                       </span>
                       {parts[1]}
@@ -113,8 +113,8 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
               }
               if (line.startsWith("- ")) {
                 return (
-                  <div key={i} className="flex gap-1 py-0.5 pl-2 text-[var(--spec-text-secondary)]">
-                    <span className="text-[var(--spec-text-muted)]">-</span>
+                  <div key={i} className="flex gap-1 py-0.5 pl-2 text-[var(--ac-text-secondary)]">
+                    <span className="text-[var(--ac-text-muted)]">-</span>
                     <span>{line.replace("- ", "")}</span>
                   </div>
                 )
@@ -123,7 +123,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
                 return <div key={i} className="h-2" />
               }
               return (
-                <p key={i} className="py-0.5 text-[var(--spec-text-secondary)]">
+                <p key={i} className="py-0.5 text-[var(--ac-text-secondary)]">
                   {line}
                 </p>
               )
@@ -132,34 +132,34 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
         </div>
       ) : (
         <div className="flex flex-1 items-center justify-center py-12">
-          <p className="text-sm text-[var(--spec-text-muted)]">No content available for preview</p>
+          <p className="text-sm text-[var(--ac-text-muted)]">No content available for preview</p>
         </div>
       )}
 
       {/* Change history */}
-      <div className="border-t border-[var(--spec-border-subtle)]">
-        <div className="border-b border-[var(--spec-border-subtle)] px-6 py-2">
-          <h3 className="text-xs font-medium text-[var(--spec-text-secondary)]">Change History</h3>
+      <div className="border-t border-[var(--ac-border-subtle)]">
+        <div className="border-b border-[var(--ac-border-subtle)] px-6 py-2">
+          <h3 className="text-xs font-medium text-[var(--ac-text-secondary)]">Change History</h3>
         </div>
         <div className="flex flex-col">
           {mockChanges.map((change) => (
             <div
               key={change.id}
-              className="flex items-center gap-3 border-b border-[var(--spec-border-subtle)] px-6 py-2 last:border-b-0"
+              className="flex items-center gap-3 border-b border-[var(--ac-border-subtle)] px-6 py-2 last:border-b-0"
             >
-              <span className="text-2xs font-mono text-[var(--spec-text-muted)] shrink-0">
+              <span className="text-2xs font-mono text-[var(--ac-text-muted)] shrink-0">
                 {formatDate(change.timestamp)}
               </span>
-              <span className="text-xs text-[var(--spec-text-secondary)]">
+              <span className="text-xs text-[var(--ac-text-secondary)]">
                 {change.description}
               </span>
               <div className="flex items-center gap-2 ml-auto shrink-0">
-                <span className="flex items-center gap-0.5 text-2xs text-[var(--spec-success)]">
+                <span className="flex items-center gap-0.5 text-2xs text-[var(--ac-success)]">
                   <Plus className="h-3 w-3" />
                   {change.linesAdded}
                 </span>
                 {change.linesRemoved > 0 && (
-                  <span className="flex items-center gap-0.5 text-2xs text-[var(--spec-error)]">
+                  <span className="flex items-center gap-0.5 text-2xs text-[var(--ac-error)]">
                     <Minus className="h-3 w-3" />
                     {change.linesRemoved}
                   </span>

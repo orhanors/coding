@@ -7,6 +7,7 @@ import type {
   DeliveryEntry,
   HistoryEntry,
   EventSubscriptions,
+  ArchitectureCommit,
 } from "./types"
 
 export const mockPipelineEvents: PipelineEvent[] = [
@@ -222,7 +223,7 @@ export const mockIntegrations: Integration[] = [
     id: "int-telegram",
     platform: "telegram",
     status: "connected",
-    channelName: "@spec_bot",
+    channelName: "@agentic_bot",
     lastDelivery: new Date("2026-02-08T14:32:30"),
   },
   {
@@ -373,5 +374,117 @@ export const mockHistory: HistoryEntry[] = [
     linesAdded: 87,
     linesRemoved: 0,
     pipelineRunId: "run-44",
+  },
+]
+
+// Architecture commits — progressive build-up matching existing ADRs
+export const mockArchitectureCommits: ArchitectureCommit[] = [
+  {
+    id: "arch-1",
+    hash: "e1a2b3c",
+    message: "Initial API + Database setup",
+    author: "pipeline",
+    timestamp: new Date("2026-02-05T09:30:00"),
+    adrRef: "ADR-0009",
+    snapshot: {
+      nodes: [
+        { id: "api", label: "API", type: "service", x: 160, y: 80, width: 100, height: 50 },
+        { id: "db", label: "DB", type: "database", x: 160, y: 200, width: 100, height: 50 },
+      ],
+      edges: [
+        { id: "api-db", from: "api", to: "db", label: "queries", style: "solid" },
+      ],
+    },
+    stats: { nodes: 2, edges: 1 },
+  },
+  {
+    id: "arch-2",
+    hash: "f4d5e6a",
+    message: "Add Auth service",
+    author: "pipeline",
+    timestamp: new Date("2026-02-06T10:15:00"),
+    adrRef: "ADR-0010",
+    snapshot: {
+      nodes: [
+        { id: "api", label: "API", type: "service", x: 160, y: 80, width: 100, height: 50 },
+        { id: "db", label: "DB", type: "database", x: 160, y: 200, width: 100, height: 50 },
+        { id: "auth", label: "Auth", type: "service", x: 320, y: 80, width: 100, height: 50 },
+      ],
+      edges: [
+        { id: "api-db", from: "api", to: "db", label: "queries", style: "solid" },
+        { id: "api-auth", from: "api", to: "auth", label: "authenticate", style: "solid" },
+      ],
+    },
+    stats: { nodes: 3, edges: 2 },
+  },
+  {
+    id: "arch-3",
+    hash: "b7c8d9e",
+    message: "Add API Gateway",
+    author: "pipeline",
+    timestamp: new Date("2026-02-06T16:45:00"),
+    adrRef: "ADR-0010",
+    snapshot: {
+      nodes: [
+        { id: "gateway", label: "Gateway", type: "gateway", x: 160, y: 20, width: 100, height: 50 },
+        { id: "api", label: "API", type: "service", x: 80, y: 120, width: 100, height: 50 },
+        { id: "auth", label: "Auth", type: "service", x: 240, y: 120, width: 100, height: 50 },
+        { id: "db", label: "DB", type: "database", x: 160, y: 230, width: 100, height: 50 },
+      ],
+      edges: [
+        { id: "gw-api", from: "gateway", to: "api", label: "route", style: "solid" },
+        { id: "gw-auth", from: "gateway", to: "auth", label: "auth check", style: "solid" },
+        { id: "api-db", from: "api", to: "db", label: "queries", style: "solid" },
+      ],
+    },
+    stats: { nodes: 4, edges: 3 },
+  },
+  {
+    id: "arch-4",
+    hash: "c2d3f4a",
+    message: "Rate limiting on Gateway",
+    author: "pipeline",
+    timestamp: new Date("2026-02-07T17:50:00"),
+    adrRef: "ADR-0011",
+    snapshot: {
+      nodes: [
+        { id: "gateway", label: "Gateway", type: "gateway", x: 160, y: 20, width: 100, height: 50 },
+        { id: "api", label: "API", type: "service", x: 80, y: 120, width: 100, height: 50 },
+        { id: "auth", label: "Auth", type: "service", x: 240, y: 120, width: 100, height: 50 },
+        { id: "db", label: "DB", type: "database", x: 160, y: 230, width: 100, height: 50 },
+      ],
+      edges: [
+        { id: "gw-api", from: "gateway", to: "api", label: "route", style: "solid" },
+        { id: "gw-auth", from: "gateway", to: "auth", label: "auth + rate limit", style: "solid" },
+        { id: "api-db", from: "api", to: "db", label: "queries", style: "solid" },
+      ],
+    },
+    stats: { nodes: 4, edges: 3 },
+  },
+  {
+    id: "arch-5",
+    hash: "a3f7c2d",
+    message: "Add Cache + Queue",
+    author: "pipeline",
+    timestamp: new Date("2026-02-08T14:32:00"),
+    adrRef: "ADR-0012",
+    snapshot: {
+      nodes: [
+        { id: "gateway", label: "Gateway", type: "gateway", x: 160, y: 20, width: 100, height: 50 },
+        { id: "api", label: "API", type: "service", x: 60, y: 120, width: 100, height: 50 },
+        { id: "auth", label: "Auth", type: "service", x: 320, y: 120, width: 100, height: 50 },
+        { id: "cache", label: "Cache", type: "cache", x: 190, y: 120, width: 100, height: 50 },
+        { id: "db", label: "DB", type: "database", x: 60, y: 230, width: 100, height: 50 },
+        { id: "queue", label: "Queue", type: "queue", x: 190, y: 230, width: 100, height: 50 },
+      ],
+      edges: [
+        { id: "gw-api", from: "gateway", to: "api", label: "route", style: "solid" },
+        { id: "gw-auth", from: "gateway", to: "auth", label: "auth + rate limit", style: "solid" },
+        { id: "api-cache", from: "api", to: "cache", label: "read/write", style: "solid" },
+        { id: "api-db", from: "api", to: "db", label: "queries", style: "solid" },
+        { id: "cache-queue", from: "cache", to: "queue", label: "invalidate", style: "dashed" },
+      ],
+    },
+    stats: { nodes: 6, edges: 5 },
   },
 ]

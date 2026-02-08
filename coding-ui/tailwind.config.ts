@@ -61,14 +61,14 @@ const config: Config = {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        spec: {
-          adr: "var(--spec-pipeline-adr)",
-          excalidraw: "var(--spec-pipeline-excalidraw)",
-          prd: "var(--spec-pipeline-prd)",
-          implement: "var(--spec-pipeline-implement)",
-          success: "var(--spec-success)",
-          warning: "var(--spec-warning)",
-          error: "var(--spec-error)",
+        ac: {
+          adr: "var(--ac-pipeline-adr)",
+          excalidraw: "var(--ac-pipeline-excalidraw)",
+          prd: "var(--ac-pipeline-prd)",
+          implement: "var(--ac-pipeline-implement)",
+          success: "var(--ac-success)",
+          warning: "var(--ac-warning)",
+          error: "var(--ac-error)",
         },
       },
       fontFamily: {

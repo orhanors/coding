@@ -40,41 +40,41 @@
     --sidebar-border: 240 10% 14%;
     --sidebar-ring: 187 82% 53%;
 
-    /* SPEC custom tokens */
-    --spec-bg-primary: #0a0a0f;
-    --spec-bg-secondary: #12121a;
-    --spec-bg-tertiary: #1a1a26;
-    --spec-bg-hover: #22223a;
-    --spec-bg-active: #2a2a45;
-    --spec-bg-surface: #16161f;
+    /* Agentic Code tokens */
+    --ac-bg-primary: #0a0a0f;
+    --ac-bg-secondary: #12121a;
+    --ac-bg-tertiary: #1a1a26;
+    --ac-bg-hover: #22223a;
+    --ac-bg-active: #2a2a45;
+    --ac-bg-surface: #16161f;
 
-    --spec-border-subtle: rgba(255, 255, 255, 0.06);
-    --spec-border-default: rgba(255, 255, 255, 0.10);
-    --spec-border-strong: rgba(255, 255, 255, 0.16);
+    --ac-border-subtle: rgba(255, 255, 255, 0.06);
+    --ac-border-default: rgba(255, 255, 255, 0.10);
+    --ac-border-strong: rgba(255, 255, 255, 0.16);
 
-    --spec-text-primary: #e4e4ed;
-    --spec-text-secondary: #9a9ab0;
-    --spec-text-muted: #5e5e76;
+    --ac-text-primary: #e4e4ed;
+    --ac-text-secondary: #9a9ab0;
+    --ac-text-muted: #5e5e76;
 
-    --spec-accent: #22d3ee;
-    --spec-accent-secondary: #06b6d4;
-    --spec-accent-muted: rgba(34, 211, 238, 0.15);
+    --ac-accent: #22d3ee;
+    --ac-accent-secondary: #06b6d4;
+    --ac-accent-muted: rgba(34, 211, 238, 0.15);
 
-    --spec-success: #34d399;
-    --spec-success-muted: rgba(52, 211, 153, 0.15);
-    --spec-warning: #fbbf24;
-    --spec-warning-muted: rgba(251, 191, 36, 0.15);
-    --spec-error: #f87171;
-    --spec-error-muted: rgba(248, 113, 113, 0.15);
+    --ac-success: #34d399;
+    --ac-success-muted: rgba(52, 211, 153, 0.15);
+    --ac-warning: #fbbf24;
+    --ac-warning-muted: rgba(251, 191, 36, 0.15);
+    --ac-error: #f87171;
+    --ac-error-muted: rgba(248, 113, 113, 0.15);
 
-    --spec-pipeline-adr: #a78bfa;
-    --spec-pipeline-excalidraw: #fb923c;
-    --spec-pipeline-prd: #22d3ee;
-    --spec-pipeline-implement: #34d399;
+    --ac-pipeline-adr: #a78bfa;
+    --ac-pipeline-excalidraw: #fb923c;
+    --ac-pipeline-prd: #22d3ee;
+    --ac-pipeline-implement: #34d399;
 
-    --spec-diff-added: rgba(52, 211, 153, 0.20);
-    --spec-diff-removed: rgba(248, 113, 113, 0.20);
-    --spec-diff-modified: rgba(251, 191, 36, 0.20);
+    --ac-diff-added: rgba(52, 211, 153, 0.20);
+    --ac-diff-removed: rgba(248, 113, 113, 0.20);
+    --ac-diff-modified: rgba(251, 191, 36, 0.20);
   }
 
   .light {
@@ -113,40 +113,40 @@
     --sidebar-border: 0 0% 90%;
     --sidebar-ring: 191 85% 37%;
 
-    --spec-bg-primary: #fafafa;
-    --spec-bg-secondary: #ffffff;
-    --spec-bg-tertiary: #f5f5f5;
-    --spec-bg-hover: #eeeeee;
-    --spec-bg-active: #e5e5e5;
-    --spec-bg-surface: #f0f0f0;
+    --ac-bg-primary: #fafafa;
+    --ac-bg-secondary: #ffffff;
+    --ac-bg-tertiary: #f5f5f5;
+    --ac-bg-hover: #eeeeee;
+    --ac-bg-active: #e5e5e5;
+    --ac-bg-surface: #f0f0f0;
 
-    --spec-border-subtle: rgba(0, 0, 0, 0.06);
-    --spec-border-default: rgba(0, 0, 0, 0.12);
-    --spec-border-strong: rgba(0, 0, 0, 0.20);
+    --ac-border-subtle: rgba(0, 0, 0, 0.06);
+    --ac-border-default: rgba(0, 0, 0, 0.12);
+    --ac-border-strong: rgba(0, 0, 0, 0.20);
 
-    --spec-text-primary: #171717;
-    --spec-text-secondary: #525252;
-    --spec-text-muted: #a3a3a3;
+    --ac-text-primary: #171717;
+    --ac-text-secondary: #525252;
+    --ac-text-muted: #a3a3a3;
 
-    --spec-accent: #0891b2;
-    --spec-accent-secondary: #0e7490;
-    --spec-accent-muted: rgba(8, 145, 178, 0.12);
+    --ac-accent: #0891b2;
+    --ac-accent-secondary: #0e7490;
+    --ac-accent-muted: rgba(8, 145, 178, 0.12);
 
-    --spec-success: #16a34a;
-    --spec-success-muted: rgba(22, 163, 74, 0.12);
-    --spec-warning: #d97706;
-    --spec-warning-muted: rgba(217, 119, 6, 0.12);
-    --spec-error: #dc2626;
-    --spec-error-muted: rgba(220, 38, 38, 0.12);
+    --ac-success: #16a34a;
+    --ac-success-muted: rgba(22, 163, 74, 0.12);
+    --ac-warning: #d97706;
+    --ac-warning-muted: rgba(217, 119, 6, 0.12);
+    --ac-error: #dc2626;
+    --ac-error-muted: rgba(220, 38, 38, 0.12);
 
-    --spec-pipeline-adr: #7c3aed;
-    --spec-pipeline-excalidraw: #ea580c;
-    --spec-pipeline-prd: #0891b2;
-    --spec-pipeline-implement: #16a34a;
+    --ac-pipeline-adr: #7c3aed;
+    --ac-pipeline-excalidraw: #ea580c;
+    --ac-pipeline-prd: #0891b2;
+    --ac-pipeline-implement: #16a34a;
 
-    --spec-diff-added: rgba(22, 163, 74, 0.15);
-    --spec-diff-removed: rgba(220, 38, 38, 0.15);
-    --spec-diff-modified: rgba(217, 119, 6, 0.15);
+    --ac-diff-added: rgba(22, 163, 74, 0.15);
+    --ac-diff-removed: rgba(220, 38, 38, 0.15);
+    --ac-diff-modified: rgba(217, 119, 6, 0.15);
   }
 }
 

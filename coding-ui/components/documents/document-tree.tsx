@@ -18,11 +18,11 @@ const folderLabels: Record<string, string> = {
 }
 
 const statusColors: Record<string, string> = {
-  proposed: "var(--spec-accent)",
-  active: "var(--spec-accent)",
-  accepted: "var(--spec-success)",
-  completed: "var(--spec-success)",
-  deprecated: "var(--spec-text-muted)",
+  proposed: "var(--ac-accent)",
+  active: "var(--ac-accent)",
+  accepted: "var(--ac-success)",
+  completed: "var(--ac-success)",
+  deprecated: "var(--ac-text-muted)",
 }
 
 export function DocumentTree({ documents, selectedId, onSelect }: DocumentTreeProps) {
@@ -50,7 +50,7 @@ function FolderNode({
     <div>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-xs text-[var(--spec-text-secondary)] hover:bg-[var(--spec-bg-hover)] transition-colors"
+        className="flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-xs text-[var(--ac-text-secondary)] hover:bg-[var(--ac-bg-hover)] transition-colors"
       >
         {expanded ? (
           <ChevronDown className="h-3.5 w-3.5 shrink-0 transition-transform" />
@@ -69,8 +69,8 @@ function FolderNode({
               className={cn(
                 "flex w-full items-center gap-2 rounded-md px-2 py-1 text-xs transition-colors text-left",
                 selectedId === child.id
-                  ? "bg-[var(--spec-accent-muted)] text-[var(--spec-accent)]"
-                  : "text-[var(--spec-text-muted)] hover:bg-[var(--spec-bg-hover)] hover:text-[var(--spec-text-secondary)]"
+                  ? "bg-[var(--ac-accent-muted)] text-[var(--ac-accent)]"
+                  : "text-[var(--ac-text-muted)] hover:bg-[var(--ac-bg-hover)] hover:text-[var(--ac-text-secondary)]"
               )}
             >
               <Circle

@@ -9,10 +9,10 @@ interface ChangeLogProps {
 }
 
 const typeColors: Record<string, string> = {
-  adr: "var(--spec-pipeline-adr)",
-  prd: "var(--spec-pipeline-prd)",
-  "prd-log": "var(--spec-pipeline-prd)",
-  pipeline: "var(--spec-pipeline-implement)",
+  adr: "var(--ac-pipeline-adr)",
+  prd: "var(--ac-pipeline-prd)",
+  "prd-log": "var(--ac-pipeline-prd)",
+  pipeline: "var(--ac-pipeline-implement)",
 }
 
 function timeAgo(date: Date) {
@@ -31,7 +31,7 @@ export function ChangeLog({ entries, maxItems = 5 }: ChangeLogProps) {
       {entries.slice(0, maxItems).map((entry, index) => (
         <div
           key={entry.id}
-          className="flex gap-3 border-b border-[var(--spec-border-subtle)] px-3 py-3 last:border-b-0"
+          className="flex gap-3 border-b border-[var(--ac-border-subtle)] px-3 py-3 last:border-b-0"
         >
           <div className="flex flex-col items-center">
             <Circle
@@ -42,29 +42,29 @@ export function ChangeLog({ entries, maxItems = 5 }: ChangeLogProps) {
               }}
             />
             {index < Math.min(entries.length, maxItems) - 1 && (
-              <div className="w-px flex-1 bg-[var(--spec-border-subtle)] mt-1" />
+              <div className="w-px flex-1 bg-[var(--ac-border-subtle)] mt-1" />
             )}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-[var(--spec-text-primary)]">
+              <span className="text-xs font-medium text-[var(--ac-text-primary)]">
                 {entry.title} {entry.action}
               </span>
             </div>
-            <p className="text-xs text-[var(--spec-text-secondary)] mt-0.5">
+            <p className="text-xs text-[var(--ac-text-secondary)] mt-0.5">
               {entry.description}
             </p>
             {(entry.linesAdded || entry.linesRemoved) && (
               <div className="flex gap-2 mt-1">
                 {entry.linesAdded !== undefined && entry.linesAdded > 0 && (
-                  <span className="text-2xs text-[var(--spec-success)]">+{entry.linesAdded}</span>
+                  <span className="text-2xs text-[var(--ac-success)]">+{entry.linesAdded}</span>
                 )}
                 {entry.linesRemoved !== undefined && entry.linesRemoved > 0 && (
-                  <span className="text-2xs text-[var(--spec-error)]">-{entry.linesRemoved}</span>
+                  <span className="text-2xs text-[var(--ac-error)]">-{entry.linesRemoved}</span>
                 )}
               </div>
             )}
-            <span className="text-2xs text-[var(--spec-text-muted)] mt-1 block">
+            <span className="text-2xs text-[var(--ac-text-muted)] mt-1 block">
               {timeAgo(entry.timestamp)}
             </span>
           </div>

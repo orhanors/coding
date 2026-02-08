@@ -1,6 +1,6 @@
 "use client"
 
-import { Search, Sun, Moon, Settings, Hexagon, ChevronDown } from "lucide-react"
+import { Search, Sun, Moon, Settings, Terminal, ChevronDown } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 
@@ -15,19 +15,19 @@ export function TopBar({ onCommandPaletteOpen, sidebarCollapsed, onSidebarToggle
   const theme = resolvedTheme; // Declare the theme variable
 
   return (
-    <header className="flex h-12 shrink-0 items-center border-b border-[var(--spec-border-subtle)] bg-[var(--spec-bg-secondary)] px-4">
+    <header className="flex h-12 shrink-0 items-center border-b border-[var(--ac-border-subtle)] bg-[var(--ac-bg-secondary)] px-4">
       <button
         onClick={onSidebarToggle}
-        className="mr-3 flex items-center gap-2 text-[var(--spec-text-primary)] hover:text-[var(--spec-accent)] transition-colors"
+        className="mr-3 flex items-center gap-2 text-[var(--ac-text-primary)] hover:text-[var(--ac-accent)] transition-colors"
         aria-label="Toggle sidebar"
       >
-        <Hexagon className="h-5 w-5 text-[var(--spec-accent)]" />
+        <Terminal className="h-4.5 w-4.5 text-[var(--ac-accent)]" />
         {!sidebarCollapsed && (
-          <span className="text-sm font-semibold tracking-tight">SPEC</span>
+          <span className="text-sm font-semibold tracking-tight font-mono">agentic</span>
         )}
       </button>
 
-      <div className="flex items-center gap-1 rounded-md bg-[var(--spec-bg-surface)] px-2 py-1 text-2xs text-[var(--spec-text-secondary)]">
+      <div className="flex items-center gap-1 rounded-md bg-[var(--ac-bg-surface)] px-2 py-1 text-2xs text-[var(--ac-text-secondary)]">
         <span>Pipeline #47</span>
         <ChevronDown className="h-3 w-3" />
       </div>
@@ -36,11 +36,11 @@ export function TopBar({ onCommandPaletteOpen, sidebarCollapsed, onSidebarToggle
 
       <button
         onClick={onCommandPaletteOpen}
-        className="flex items-center gap-2 rounded-md border border-[var(--spec-border-default)] bg-[var(--spec-bg-surface)] px-3 py-1.5 text-xs text-[var(--spec-text-muted)] hover:text-[var(--spec-text-secondary)] hover:border-[var(--spec-border-strong)] transition-colors"
+        className="flex items-center gap-2 rounded-md border border-[var(--ac-border-default)] bg-[var(--ac-bg-surface)] px-3 py-1.5 text-xs text-[var(--ac-text-muted)] hover:text-[var(--ac-text-secondary)] hover:border-[var(--ac-border-strong)] transition-colors"
       >
         <Search className="h-3.5 w-3.5" />
         <span>Search...</span>
-        <kbd className="ml-4 rounded border border-[var(--spec-border-default)] bg-[var(--spec-bg-tertiary)] px-1.5 py-0.5 text-2xs font-mono text-[var(--spec-text-muted)]">
+        <kbd className="ml-4 rounded border border-[var(--ac-border-default)] bg-[var(--ac-bg-tertiary)] px-1.5 py-0.5 text-2xs font-mono text-[var(--ac-text-muted)]">
           {"K"}
         </kbd>
       </button>
@@ -49,7 +49,7 @@ export function TopBar({ onCommandPaletteOpen, sidebarCollapsed, onSidebarToggle
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 text-[var(--spec-text-secondary)] hover:text-[var(--spec-text-primary)] hover:bg-[var(--spec-bg-hover)]"
+          className="h-8 w-8 text-[var(--ac-text-secondary)] hover:text-[var(--ac-text-primary)] hover:bg-[var(--ac-bg-hover)]"
           onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
           aria-label="Toggle theme"
         >
@@ -59,12 +59,12 @@ export function TopBar({ onCommandPaletteOpen, sidebarCollapsed, onSidebarToggle
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 text-[var(--spec-text-secondary)] hover:text-[var(--spec-text-primary)] hover:bg-[var(--spec-bg-hover)]"
+          className="h-8 w-8 text-[var(--ac-text-secondary)] hover:text-[var(--ac-text-primary)] hover:bg-[var(--ac-bg-hover)]"
           aria-label="Settings"
         >
           <Settings className="h-4 w-4" />
         </Button>
-        <div className="ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--spec-accent-muted)] text-xs font-medium text-[var(--spec-accent)]">
+        <div className="ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--ac-accent-muted)] text-xs font-medium text-[var(--ac-accent)]">
           U
         </div>
       </div>

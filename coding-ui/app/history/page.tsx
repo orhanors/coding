@@ -8,10 +8,10 @@ import { mockHistory } from "@/lib/mock-data"
 import type { HistoryEntry } from "@/lib/types"
 
 const typeColors: Record<string, string> = {
-  adr: "var(--spec-pipeline-adr)",
-  prd: "var(--spec-pipeline-prd)",
-  "prd-log": "var(--spec-pipeline-prd)",
-  pipeline: "var(--spec-pipeline-implement)",
+  adr: "var(--ac-pipeline-adr)",
+  prd: "var(--ac-pipeline-prd)",
+  "prd-log": "var(--ac-pipeline-prd)",
+  pipeline: "var(--ac-pipeline-implement)",
 }
 
 const typeLabels: Record<string, string> = {
@@ -42,7 +42,7 @@ function HistoryCard({ entry }: { entry: HistoryEntry }) {
           className="h-3 w-3 shrink-0"
           style={{ color, fill: color }}
         />
-        <div className="w-px flex-1 bg-[var(--spec-border-subtle)] mt-1" />
+        <div className="w-px flex-1 bg-[var(--ac-border-subtle)] mt-1" />
       </div>
 
       {/* Content */}
@@ -57,25 +57,25 @@ function HistoryCard({ entry }: { entry: HistoryEntry }) {
           >
             {typeLabels[entry.type]}
           </span>
-          <span className="text-sm font-medium text-[var(--spec-text-primary)]">
+          <span className="text-sm font-medium text-[var(--ac-text-primary)]">
             {entry.title}
           </span>
-          <span className="text-xs text-[var(--spec-text-secondary)]">{entry.action}</span>
+          <span className="text-xs text-[var(--ac-text-secondary)]">{entry.action}</span>
         </div>
 
-        <p className="text-xs text-[var(--spec-text-secondary)] mb-2">{entry.description}</p>
+        <p className="text-xs text-[var(--ac-text-secondary)] mb-2">{entry.description}</p>
 
         {/* Line changes */}
         {(entry.linesAdded !== undefined || entry.linesRemoved !== undefined) && (
           <div className="flex gap-3 mb-2">
             {entry.linesAdded !== undefined && entry.linesAdded > 0 && (
-              <span className="flex items-center gap-0.5 text-2xs text-[var(--spec-success)]">
+              <span className="flex items-center gap-0.5 text-2xs text-[var(--ac-success)]">
                 <Plus className="h-3 w-3" />
                 {entry.linesAdded} lines
               </span>
             )}
             {entry.linesRemoved !== undefined && entry.linesRemoved > 0 && (
-              <span className="flex items-center gap-0.5 text-2xs text-[var(--spec-error)]">
+              <span className="flex items-center gap-0.5 text-2xs text-[var(--ac-error)]">
                 <Minus className="h-3 w-3" />
                 {entry.linesRemoved} lines
               </span>
@@ -87,7 +87,7 @@ function HistoryCard({ entry }: { entry: HistoryEntry }) {
         {entry.relatedItems && entry.relatedItems.length > 0 && (
           <div className="flex flex-col gap-0.5">
             {entry.relatedItems.map((item, i) => (
-              <span key={i} className="text-2xs text-[var(--spec-text-muted)]">
+              <span key={i} className="text-2xs text-[var(--ac-text-muted)]">
                 {item}
               </span>
             ))}
@@ -95,7 +95,7 @@ function HistoryCard({ entry }: { entry: HistoryEntry }) {
         )}
 
         {/* Meta */}
-        <div className="flex items-center gap-3 mt-2 text-2xs text-[var(--spec-text-muted)]">
+        <div className="flex items-center gap-3 mt-2 text-2xs text-[var(--ac-text-muted)]">
           <span className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
             {formatDateTime(entry.timestamp)}
@@ -122,17 +122,17 @@ export default function HistoryPage() {
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[var(--spec-border-subtle)] px-6 py-3">
-        <h1 className="text-lg font-semibold text-[var(--spec-text-primary)]">History</h1>
+      <div className="flex items-center justify-between border-b border-[var(--ac-border-subtle)] px-6 py-3">
+        <h1 className="text-lg font-semibold text-[var(--ac-text-primary)]">History</h1>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             className={cn(
-              "h-7 text-2xs border-[var(--spec-border-default)] bg-transparent hover:bg-[var(--spec-bg-hover)]",
+              "h-7 text-2xs border-[var(--ac-border-default)] bg-transparent hover:bg-[var(--ac-bg-hover)]",
               filter === null
-                ? "text-[var(--spec-accent)] border-[var(--spec-accent)]"
-                : "text-[var(--spec-text-secondary)] hover:text-[var(--spec-text-primary)]"
+                ? "text-[var(--ac-accent)] border-[var(--ac-accent)]"
+                : "text-[var(--ac-text-secondary)] hover:text-[var(--ac-text-primary)]"
             )}
             onClick={() => setFilter(null)}
           >
@@ -144,10 +144,10 @@ export default function HistoryPage() {
               variant="outline"
               size="sm"
               className={cn(
-                "h-7 text-2xs border-[var(--spec-border-default)] bg-transparent hover:bg-[var(--spec-bg-hover)]",
+                "h-7 text-2xs border-[var(--ac-border-default)] bg-transparent hover:bg-[var(--ac-bg-hover)]",
                 filter === type
-                  ? "border-[var(--spec-accent)]"
-                  : "text-[var(--spec-text-secondary)] hover:text-[var(--spec-text-primary)]"
+                  ? "border-[var(--ac-accent)]"
+                  : "text-[var(--ac-text-secondary)] hover:text-[var(--ac-text-primary)]"
               )}
               style={filter === type ? { color: typeColors[type], borderColor: typeColors[type] } : undefined}
               onClick={() => setFilter(type)}
@@ -162,7 +162,7 @@ export default function HistoryPage() {
       <div className="flex-1 overflow-y-auto scrollbar-thin">
         {filteredHistory.length === 0 ? (
           <div className="flex items-center justify-center py-12">
-            <p className="text-sm text-[var(--spec-text-muted)]">No history entries found</p>
+            <p className="text-sm text-[var(--ac-text-muted)]">No history entries found</p>
           </div>
         ) : (
           filteredHistory.map((entry) => (
