@@ -27,13 +27,15 @@ When this command is invoked, first check whether structured parameters are pres
 If the prompt contains `PRD_FILE=<filename>`, `METHOD=loop`, and `STYLE=<task|phase>`:
 
 1. Skip all interactive selection — go straight to execution
-2. Read the PRD file from `architecture-prd/<PRD_FILE>`
-3. Detect phases (see Phase Detection Algorithm below)
-4. Find the next incomplete work unit based on STYLE:
+2. **Read the PRD file** from `architecture-prd/<PRD_FILE>`
+3. **Read the implementation log** from `architecture-prd-logs/` — the log file mirrors the PRD name but with `-log.md` suffix instead of `-prd.md` (e.g., PRD `0003-psyche-ui-prd.md` → log `0003-psyche-ui-log.md`). If no log file exists, create one (see Log File Management below). Read the log to understand what was already done in previous cycles — this is your context for what happened before.
+4. Detect phases (see Phase Detection Algorithm below)
+5. Find the next incomplete work unit based on STYLE:
    - `STYLE=task`: next single incomplete task (lowest phase first)
    - `STYLE=phase`: all incomplete tasks in the current phase (with sub-phase splitting if >4 tasks)
-5. Execute: create a unified plan, implement, mark tasks done, update PRD file
-6. At the very end of your response, print one of these completion signals on its own line:
+6. Execute: create a unified plan, implement, mark tasks done, update PRD file
+7. **Update the implementation log** — append a concise summary of what was done in this cycle (see Log Update Format below)
+8. At the very end of your response, print one of these completion signals on its own line:
    - `ALL_TASKS_COMPLETE` — every task in the PRD has `implemented: true`
    - `CYCLE_COMPLETE` — this cycle's work is done, more tasks remain
 
@@ -80,10 +82,10 @@ Based on the selected method + style combination:
 
 | Method | Style | Behavior |
 |--------|-------|----------|
-| single | task | Implement 1 task, mark done, show updated progress, stop |
-| single | phase | Implement all tasks in current phase (sub-split if >4), mark done, stop |
-| loop | task | Implement 1 task, mark done, print `CYCLE_COMPLETE` or `ALL_TASKS_COMPLETE`, stop |
-| loop | phase | Implement current phase/sub-phase, mark done, print signal, stop |
+| single | task | Implement 1 task, mark done, update log, show updated progress, stop |
+| single | phase | Implement all tasks in current phase (sub-split if >4), mark done, update log, stop |
+| loop | task | Implement 1 task, mark done, update log, print `CYCLE_COMPLETE` or `ALL_TASKS_COMPLETE`, stop |
+| loop | phase | Implement current phase/sub-phase, mark done, update log, print signal, stop |
 
 For **single** method: after completion, show updated progress summary and ask if the user wants to continue.
 
@@ -203,6 +205,67 @@ When marking a task as complete:
 
 ---
 
+## Log File Management
+
+Each PRD has exactly **one** log file in `architecture-prd-logs/`. The log file is a persistent record of all implementation work across all sessions and cycles.
+
+### Log File Naming
+
+Derived from the PRD filename by replacing `-prd.md` with `-log.md`:
+- PRD: `0003-psyche-ui-prd.md` → Log: `0003-psyche-ui-log.md`
+- PRD: `0004-tts-performance-prd.md` → Log: `0004-tts-performance-log.md`
+
+### Creating a New Log File
+
+If no log file exists when starting work, create one:
+
+```markdown
+# Implementation Log: 0003-psyche-ui
+
+**PRD:** [0003-psyche-ui-prd.md](../architecture-prd/0003-psyche-ui-prd.md)
+**Created:** 2026-02-09 21:00
+
+---
+
+```
+
+### Log Update Format
+
+After completing each cycle's work, **append** a concise summary to the log file. The summary should capture what was done so the next cycle (which starts fresh) has full context. Format:
+
+```markdown
+## Cycle N — Phase X: [Phase Name] (YYYY-MM-DD HH:MM)
+
+**Tasks completed:**
+- Task description 1
+- Task description 2
+
+**What was done:**
+- Brief description of implementation work
+- Key files created/modified
+- Notable decisions or trade-offs
+
+**Progress:** X/Y tasks complete (Z%)
+
+**Improvements noted:**
+- Any improvements tracked for later
+
+---
+
+```
+
+### Reading the Log for Context
+
+At the start of each cycle, read the log file to understand:
+- Which tasks/phases were already completed
+- What approach was taken in previous cycles
+- Any improvements or issues noted
+- Current progress state
+
+This gives continuity across cycles since each Claude invocation starts fresh.
+
+---
+
 ## Improvements Workflow
 
 ### When marking a task complete, ALWAYS analyze for improvements
@@ -290,6 +353,8 @@ Each task should follow this structure:
 - **Improvements tracking:** initialize `improvements: []` and `improvements_done: false` if not present
 - **Phase ordering:** always complete lower phases before higher ones
 - **Completion signals:** in loop mode, ALWAYS end response with `CYCLE_COMPLETE` or `ALL_TASKS_COMPLETE`
+- **Single log file:** each PRD has exactly one log file — append to it, never create multiple log files
+- **No PRD snapshots:** the PRD file in `architecture-prd/` is the single source of truth — never copy/snapshot it
 
 ## Related Commands
 

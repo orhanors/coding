@@ -175,11 +175,35 @@ fi
 
 log "Tasks: ${COMPLETE_COUNT}/${TOTAL_COUNT} complete, ${INCOMPLETE_COUNT} remaining"
 
-# Create log directory
+# ── Resolve Log File ────────────────────────────────────────────────────────
+# Single log file per PRD in architecture-prd-logs/
+# Naming: derive from PRD filename (e.g., 0003-psyche-ui-prd.md → 0003-psyche-ui-log.md)
 LOG_DIR="architecture-prd-logs"
 mkdir -p "$LOG_DIR"
-SESSION_ID=$(date '+%Y%m%d_%H%M%S')
-SESSION_LOG="${LOG_DIR}/${PRD_NUMBER}_${SESSION_ID}.log"
+
+# Derive log filename from PRD filename: replace -prd.md with -log.md
+LOG_BASENAME="${PRD_BASENAME%-prd.md}-log.md"
+LOG_FILE="${LOG_DIR}/${LOG_BASENAME}"
+
+if [[ -f "$LOG_FILE" ]]; then
+  success "Found existing log: $LOG_BASENAME"
+else
+  log "Creating new log: $LOG_BASENAME"
+  {
+    echo "# Implementation Log: ${PRD_BASENAME%-prd.md}"
+    echo ""
+    echo "**PRD:** [${PRD_BASENAME}](../architecture-prd/${PRD_BASENAME})"
+    echo "**Created:** $(date '+%Y-%m-%d %H:%M')"
+    echo ""
+    echo "---"
+    echo ""
+  } > "$LOG_FILE"
+fi
+
+# ── Terminal Logs Directory ─────────────────────────────────────────────────
+# Temp files (JSON streams, stderr) go to .terminal-logs/ (gitignored)
+TERMINAL_LOG_DIR=".terminal-logs"
+mkdir -p "$TERMINAL_LOG_DIR"
 
 # ── Summary ──────────────────────────────────────────────────────────────────
 echo ""
@@ -190,7 +214,7 @@ echo -e "  PRD:        ${CYAN}${PRD_BASENAME}${NC}"
 echo -e "  Style:      ${CYAN}${STYLE}${NC}"
 echo -e "  Delay:      ${CYAN}${DELAY}s${NC} between cycles"
 echo -e "  Max cycles: ${CYAN}$([ "$MAX_CYCLES" -eq 0 ] && echo "unlimited" || echo "$MAX_CYCLES")${NC}"
-echo -e "  Log:        ${CYAN}${SESSION_LOG}${NC}"
+echo -e "  Log:        ${CYAN}${LOG_FILE}${NC}"
 echo -e "${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
@@ -214,17 +238,19 @@ while true; do
 
   echo ""
   log "${BOLD}━━━ Cycle $CYCLE ━━━${NC}"
-  CYCLE_LOG="${LOG_DIR}/${PRD_NUMBER}_${SESSION_ID}_cycle${CYCLE}.log"
+
+  # Temp files go to .terminal-logs/ (gitignored)
+  CYCLE_JSON="${TERMINAL_LOG_DIR}/${PRD_NUMBER}_cycle${CYCLE}.json"
+  CYCLE_STDERR="${TERMINAL_LOG_DIR}/${PRD_NUMBER}_cycle${CYCLE}.stderr"
 
   # Run claude CLI with streaming JSON output
   log "Running claude with ${STYLE} style..."
   CYCLE_START=$(date +%s)
-  CYCLE_JSON="${CYCLE_LOG}.json"
 
   set +e
   claude -p --verbose --dangerously-skip-permissions \
     --output-format stream-json \
-    "$PROMPT" 2>"${CYCLE_LOG}.stderr" \
+    "$PROMPT" 2>"$CYCLE_STDERR" \
     | grep --line-buffered '^{' \
     | tee "$CYCLE_JSON" \
     | jq --unbuffered -rj "$JQ_STREAM"
@@ -237,34 +263,24 @@ while true; do
   CYCLE_END=$(date +%s)
   CYCLE_DURATION=$((CYCLE_END - CYCLE_START))
 
-  # Save cycle output to log
+  # Append cycle summary to the single log file
   {
-    echo "=== Cycle $CYCLE ==="
-    echo "Start: $(date -r "$CYCLE_START" '+%Y-%m-%d %H:%M:%S' 2>/dev/null || date '+%Y-%m-%d %H:%M:%S')"
-    echo "Duration: ${CYCLE_DURATION}s"
-    echo "Exit code: $EXIT_CODE"
-    echo "---"
+    echo "## Session $(date '+%Y-%m-%d') — Cycle $CYCLE"
+    echo ""
+    echo "- **Start:** $(date -r "$CYCLE_START" '+%Y-%m-%d %H:%M:%S' 2>/dev/null || date '+%Y-%m-%d %H:%M:%S')"
+    echo "- **Duration:** ${CYCLE_DURATION}s"
+    echo "- **Style:** ${STYLE}"
+    echo "- **Exit code:** $EXIT_CODE"
+    echo ""
     echo "$OUTPUT"
     echo ""
-  } >> "$SESSION_LOG"
-
-  # Save raw JSON stream as cycle log
-  cp "$CYCLE_JSON" "$CYCLE_LOG"
+    echo "---"
+    echo ""
+  } >> "$LOG_FILE"
 
   if [[ $EXIT_CODE -ne 0 ]]; then
     error "Claude CLI exited with code $EXIT_CODE"
-    error "Check log: $CYCLE_LOG"
-
-    # Snapshot PRD state even on error
-    PRD_SNAPSHOT="${LOG_DIR}/${PRD_NUMBER}_${SESSION_ID}_cycle${CYCLE}_prd.md"
-    cp "$PRD_FILE" "$PRD_SNAPSHOT"
-    {
-      echo "=== PRD State After Cycle $CYCLE (ERROR exit=$EXIT_CODE) ==="
-      cat "$PRD_FILE"
-      echo ""
-      echo "=== End PRD State ==="
-    } >> "$SESSION_LOG"
-
+    error "Check stderr: $CYCLE_STDERR"
     warn "Continuing to next cycle despite error..."
     continue
   fi
@@ -278,18 +294,6 @@ while true; do
     echo ""
     success "${BOLD}All tasks complete!${NC}"
     log "PRD $PRD_BASENAME is fully implemented."
-
-    # Snapshot final PRD state
-    PRD_SNAPSHOT="${LOG_DIR}/${PRD_NUMBER}_${SESSION_ID}_cycle${CYCLE}_prd.md"
-    cp "$PRD_FILE" "$PRD_SNAPSHOT"
-    log "Final PRD snapshot saved: $PRD_SNAPSHOT"
-    {
-      echo "=== PRD State After Cycle $CYCLE (FINAL) ==="
-      cat "$PRD_FILE"
-      echo ""
-      echo "=== End PRD State ==="
-    } >> "$SESSION_LOG"
-
     break
   elif echo "$LAST_LINES" | grep -q "CYCLE_COMPLETE"; then
     success "Cycle $CYCLE done. More tasks remain."
@@ -299,22 +303,6 @@ while true; do
     TOTAL_COUNT=$(grep -c '"implemented":' "$PRD_FILE" 2>/dev/null || true)
     COMPLETE_COUNT=$((TOTAL_COUNT - INCOMPLETE_COUNT))
     log "Progress: ${COMPLETE_COUNT}/${TOTAL_COUNT} tasks complete"
-
-    # Snapshot PRD state after this cycle
-    PRD_SNAPSHOT="${LOG_DIR}/${PRD_NUMBER}_${SESSION_ID}_cycle${CYCLE}_prd.md"
-    cp "$PRD_FILE" "$PRD_SNAPSHOT"
-    log "PRD snapshot saved: $PRD_SNAPSHOT"
-
-    # Append PRD state summary to session log
-    {
-      echo "=== PRD State After Cycle $CYCLE ==="
-      echo "Progress: ${COMPLETE_COUNT}/${TOTAL_COUNT} tasks complete"
-      echo "--- PRD Content ---"
-      cat "$PRD_FILE"
-      echo ""
-      echo "=== End PRD State ==="
-      echo ""
-    } >> "$SESSION_LOG"
 
     if [[ "$INCOMPLETE_COUNT" -eq 0 ]]; then
       success "${BOLD}All tasks complete!${NC}"
@@ -334,16 +322,6 @@ while true; do
     echo "$LAST_LINES"
     echo ""
 
-    # Snapshot PRD state even with no signal
-    PRD_SNAPSHOT="${LOG_DIR}/${PRD_NUMBER}_${SESSION_ID}_cycle${CYCLE}_prd.md"
-    cp "$PRD_FILE" "$PRD_SNAPSHOT"
-    {
-      echo "=== PRD State After Cycle $CYCLE (NO SIGNAL) ==="
-      cat "$PRD_FILE"
-      echo ""
-      echo "=== End PRD State ==="
-    } >> "$SESSION_LOG"
-
     warn "Continuing to next cycle..."
 
     # Delay before next cycle
@@ -362,7 +340,7 @@ echo -e "${BOLD}━━━━━━━━━━━━━━━━━━━━━�
 echo -e "  PRD:           ${CYAN}${PRD_BASENAME}${NC}"
 echo -e "  Cycles run:    ${CYAN}${CYCLE}${NC}"
 echo -e "  Style:         ${CYAN}${STYLE}${NC}"
-echo -e "  Session log:   ${CYAN}${SESSION_LOG}${NC}"
+echo -e "  Log:           ${CYAN}${LOG_FILE}${NC}"
 
 # Final progress
 INCOMPLETE_COUNT=$(grep -c '"implemented": false' "$PRD_FILE" 2>/dev/null || true)
