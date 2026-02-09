@@ -1,0 +1,44 @@
+Phase 3 is complete. Here's a summary of everything implemented:
+
+## Phase 3 — River & Documents: Complete
+
+### Components Created (17 new files):
+
+**River View** (`/river`):
+- `components/river/river-view.tsx` — Vertical timeline with date groupings (Today, Yesterday, formatted dates)
+- `components/river/river-date-group.tsx` — Date separator with circle node + label
+- `components/river/river-entry.tsx` — Timeline entries with typed icons (◆◇◈●○★), expandable previews, agent attribution, diff stats badges
+- `components/river/river-filters.tsx` — Type/agent/search dropdowns with active filter chips and "Clear all"
+- `components/river/diagram-thumbnail.tsx` — Placeholder diagram preview with node/edge stats
+
+**Diff Components**:
+- `components/diff/diff-preview.tsx` — Inline diff hunk viewer with added (green + underline), removed (red + strikethrough), context lines
+- `components/diff/diff-stats.tsx` — Compact `+47 −12` / `+4 nodes +3 edges` badge
+
+**Visions** (`/visions`):
+- `components/visions/vision-board.tsx` — 4-column Kanban (Backlog, In Progress, Review, Done) with HTML5 drag-and-drop
+- `components/visions/vision-card.tsx` — Draggable card with archetype-colored left border, priority dots, progress bar
+- `components/visions/vision-list.tsx` — Sortable table view with column headers
+- `components/visions/vision-detail-modal.tsx` — Modal with collapsible phased tasks, checkbox toggling, change history
+- `components/visions/vision-editor.tsx` — New Vision dialog with title, overview, priority, agent assignment
+
+**Reflections** (`/reflections`):
+- `components/reflections/reflection-list.tsx` — Grouped list (Active/Proposed/Superseded/Deprecated) with inline approve buttons
+- `components/reflections/reflection-status-badge.tsx` — Colored status badges
+- `components/reflections/reflection-reader.tsx` — Markdown reader with safe rendering (no dangerouslySetInnerHTML)
+- `components/reflections/reflection-diff-history.tsx` — Version history panel with expandable inline diffs
+- `components/reflections/reflection-editor.tsx` — New Reflection dialog
+
+**Agent Stream Overlay** (global, persists across navigation):
+- `components/agent/agent-stream-overlay.tsx` — 360px sheet with archetype icon, status, stream content
+- `components/agent/agent-stream-content.tsx` — Streaming text with blinking cursor (▍)
+- `components/agent/agent-event-log.tsx` — Timestamped event feed with color-coded event types
+- `components/agent/agent-controls.tsx` — Pause/Resume, Approve All, Stop (with confirmation dialog)
+
+**Updated Files**:
+- `components/layout/psyche-shell.tsx` — Added AgentStreamOverlay at shell level
+- `app/river/page.tsx` — Full river page with filters, grouped timeline, empty states
+- `app/visions/page.tsx` — Board/List toggle, new vision button, detail modal
+- `app/reflections/page.tsx` — Split-view with search, list, reader, diff history
+
+Build passes cleanly with `next build`. PRD updated to 21/32 tasks complete.

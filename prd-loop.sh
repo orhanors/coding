@@ -27,6 +27,12 @@ CYAN='\033[0;36m'
 BOLD='\033[1m'
 NC='\033[0m' # No Color
 
+# ── jq Filters ────────────────────────────────────────────────────────────
+# Extract streaming text from assistant messages for live display
+JQ_STREAM='select(.type == "assistant").message.content[]? | select(.type == "text").text // empty | gsub("\n"; "\r\n") | . + "\r\n\n"'
+# Extract the final result text
+JQ_RESULT='select(.type == "result").result // empty'
+
 # ── Helpers ─────────────────────────────────────────────────────────────────
 usage() {
   cat <<EOF
@@ -134,6 +140,13 @@ if ! command -v claude &>/dev/null; then
 fi
 success "claude CLI found"
 
+# Check jq exists
+if ! command -v jq &>/dev/null; then
+  error "jq not found. Install it: brew install jq"
+  exit 1
+fi
+success "jq found"
+
 # Resolve PRD file
 PRD_DIR="architecture-prd"
 PRD_FILE=$(find "$PRD_DIR" -maxdepth 1 -name "${PRD_NUMBER}-*-prd.md" -type f 2>/dev/null | head -1)
@@ -203,15 +216,23 @@ while true; do
   log "${BOLD}━━━ Cycle $CYCLE ━━━${NC}"
   CYCLE_LOG="${LOG_DIR}/${PRD_NUMBER}_${SESSION_ID}_cycle${CYCLE}.log"
 
-  # Run claude CLI
+  # Run claude CLI with streaming JSON output
   log "Running claude with ${STYLE} style..."
   CYCLE_START=$(date +%s)
+  CYCLE_JSON="${CYCLE_LOG}.json"
 
   set +e
-  claude -p --verbose --dangerously-skip-permissions "$PROMPT" 2>&1 | tee "$CYCLE_LOG"
+  claude -p --verbose --dangerously-skip-permissions \
+    --output-format stream-json \
+    "$PROMPT" 2>"${CYCLE_LOG}.stderr" \
+    | grep --line-buffered '^{' \
+    | tee "$CYCLE_JSON" \
+    | jq --unbuffered -rj "$JQ_STREAM"
   EXIT_CODE=${PIPESTATUS[0]}
-  OUTPUT=$(cat "$CYCLE_LOG")
   set -e
+
+  # Extract final result text from the stream JSON
+  OUTPUT=$(jq -r "$JQ_RESULT" "$CYCLE_JSON")
 
   CYCLE_END=$(date +%s)
   CYCLE_DURATION=$((CYCLE_END - CYCLE_START))
@@ -227,7 +248,8 @@ while true; do
     echo ""
   } >> "$SESSION_LOG"
 
-  # Individual cycle log already written by tee above
+  # Save raw JSON stream as cycle log
+  cp "$CYCLE_JSON" "$CYCLE_LOG"
 
   if [[ $EXIT_CODE -ne 0 ]]; then
     error "Claude CLI exited with code $EXIT_CODE"

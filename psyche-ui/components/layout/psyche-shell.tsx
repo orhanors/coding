@@ -3,6 +3,7 @@
 import { PsycheTopBar } from "./psyche-top-bar"
 import { StatusStrip } from "./status-strip"
 import { CommandPalette } from "./command-palette"
+import { AgentStreamOverlay } from "@/components/agent/agent-stream-overlay"
 
 export function PsycheShell({ children }: { children: React.ReactNode }) {
   return (
@@ -11,6 +12,7 @@ export function PsycheShell({ children }: { children: React.ReactNode }) {
       <main className="flex-1 overflow-hidden">{children}</main>
       <StatusStrip />
       <CommandPalette />
+      <AgentStreamOverlay />
     </div>
   )
 }
