@@ -1,15 +1,34 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRiverStore } from "@/stores/river-store"
 import { RiverFilters } from "@/components/river/river-filters"
 import { RiverView } from "@/components/river/river-view"
+import { RiverSkeleton } from "@/components/river/river-skeleton"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 export default function RiverPage() {
+  const [loading, setLoading] = useState(true)
   const { filters, getFilteredEntries } = useRiverStore()
   const entries = getFilteredEntries()
   const hasFilters = !!(filters.type || filters.agentId || filters.search)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 100)
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex h-full flex-col">
+        <div className="shrink-0 border-b border-[var(--border-subtle)] px-6 py-4">
+          <RiverFilters />
+        </div>
+        <RiverSkeleton />
+      </div>
+    )
+  }
 
   return (
     <div className="flex h-full flex-col">

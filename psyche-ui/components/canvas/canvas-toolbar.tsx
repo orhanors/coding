@@ -28,6 +28,7 @@ export function CanvasToolbar() {
             <Button
               variant="ghost"
               size="icon"
+              aria-label="Zoom out"
               className="h-7 w-7 rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"
               onClick={zoomOut}
             >
@@ -41,6 +42,7 @@ export function CanvasToolbar() {
         <Tooltip>
           <TooltipTrigger asChild>
             <button
+              aria-label="Reset zoom"
               className="min-w-[40px] px-1 text-center text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               onClick={resetView}
             >
@@ -56,6 +58,7 @@ export function CanvasToolbar() {
             <Button
               variant="ghost"
               size="icon"
+              aria-label="Zoom in"
               className="h-7 w-7 rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"
               onClick={zoomIn}
             >
@@ -74,6 +77,7 @@ export function CanvasToolbar() {
             <Button
               variant="ghost"
               size="icon"
+              aria-label={mode === "canvas" ? "Switch to constellation mode" : "Switch to canvas mode"}
               className={cn(
                 "h-7 w-7 rounded-md",
                 mode === "constellation"
@@ -103,6 +107,7 @@ export function CanvasToolbar() {
             <Button
               variant="ghost"
               size="icon"
+              aria-label="Add agent"
               className="h-7 w-7 rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"
               onClick={() => openConfigPanel()}
             >

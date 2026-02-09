@@ -15,9 +15,11 @@ import { Slider } from "@/components/ui/slider"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useAgentStore } from "@/stores/agent-store"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { ARCHETYPES, AUTONOMY_LEVELS, AGENT_STATUSES } from "@/lib/constants"
 import type { AgentArchetype } from "@/lib/types"
 import { cn } from "@/lib/utils"
+import { agentConfigSchema } from "@/lib/validation"
 
 const ARCHETYPE_ICONS: Record<AgentArchetype, React.ElementType> = {
   architect: Compass,
@@ -38,6 +40,7 @@ interface NewAgentPosition {
 }
 
 export function AgentConfigPanel({ defaultPosition }: { defaultPosition?: NewAgentPosition }) {
+  const isMobile = useIsMobile()
   const open = useAgentStore((s) => s.configPanelOpen)
   const agentId = useAgentStore((s) => s.configPanelAgentId)
   const agents = useAgentStore((s) => s.agents)
@@ -54,6 +57,7 @@ export function AgentConfigPanel({ defaultPosition }: { defaultPosition?: NewAge
   const [archetype, setArchetype] = useState<AgentArchetype>("architect")
   const [task, setTask] = useState("")
   const [autonomy, setAutonomy] = useState(3)
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   // Populate form when editing
   useEffect(() => {
@@ -68,25 +72,45 @@ export function AgentConfigPanel({ defaultPosition }: { defaultPosition?: NewAge
       setTask("")
       setAutonomy(3)
     }
+    setErrors({})
   }, [editAgent, open])
 
   const handleSubmit = () => {
-    if (!name.trim() || !task.trim()) return
+    const result = agentConfigSchema.safeParse({
+      name: name.trim(),
+      archetype,
+      task: task.trim(),
+      autonomy,
+    })
+
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {}
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as string
+        if (!fieldErrors[field]) {
+          fieldErrors[field] = issue.message
+        }
+      }
+      setErrors(fieldErrors)
+      return
+    }
+
+    setErrors({})
 
     if (isEditing && editAgent) {
       updateAgent(editAgent.id, {
-        name: name.trim(),
-        archetype,
-        task: task.trim(),
-        autonomy: autonomy as 1 | 2 | 3 | 4 | 5,
+        name: result.data.name,
+        archetype: result.data.archetype,
+        task: result.data.task,
+        autonomy: result.data.autonomy as 1 | 2 | 3 | 4 | 5,
       })
     } else {
       addAgent(
         {
-          name: name.trim(),
-          archetype,
-          task: task.trim(),
-          autonomy: autonomy as 1 | 2 | 3 | 4 | 5,
+          name: result.data.name,
+          archetype: result.data.archetype,
+          task: result.data.task,
+          autonomy: result.data.autonomy as 1 | 2 | 3 | 4 | 5,
         },
         defaultPosition ?? { x: 200, y: 200 }
       )
@@ -106,7 +130,15 @@ export function AgentConfigPanel({ defaultPosition }: { defaultPosition?: NewAge
 
   return (
     <Sheet open={open} onOpenChange={(v) => !v && closeConfigPanel()}>
-      <SheetContent side="right" className="w-[320px] bg-[var(--bg-tertiary)] sm:w-[320px]">
+      <SheetContent
+        side={isMobile ? "bottom" : "right"}
+        className={cn(
+          "bg-[var(--bg-tertiary)]",
+          isMobile
+            ? "w-full max-h-[80vh] rounded-t-xl overflow-y-auto"
+            : "w-[320px] sm:w-[320px]"
+        )}
+      >
         <SheetHeader>
           <SheetTitle className="text-[var(--text-primary)]">
             {isEditing ? "Edit Agent" : "Create Agent"}
@@ -140,10 +172,11 @@ export function AgentConfigPanel({ defaultPosition }: { defaultPosition?: NewAge
             <Label className="text-xs text-[var(--text-secondary)]">Name</Label>
             <Input
               value={name}
-              onChange={(e) => setName(e.target.value.slice(0, 50))}
+              onChange={(e) => { setName(e.target.value.slice(0, 50)); setErrors((prev) => { const { name: _, ...rest } = prev; return rest }) }}
               placeholder="Name your agent"
-              className="bg-[var(--bg-surface)] border-[var(--border-default)]"
+              className={cn("bg-[var(--bg-surface)] border-[var(--border-default)]", errors.name && "border-[var(--error)]")}
             />
+            {errors.name && <p className="text-xs text-[var(--error)]">{errors.name}</p>}
           </div>
 
           {/* Archetype */}
@@ -177,11 +210,12 @@ export function AgentConfigPanel({ defaultPosition }: { defaultPosition?: NewAge
             <Label className="text-xs text-[var(--text-secondary)]">Task</Label>
             <Textarea
               value={task}
-              onChange={(e) => setTask(e.target.value.slice(0, 500))}
+              onChange={(e) => { setTask(e.target.value.slice(0, 500)); setErrors((prev) => { const { task: _, ...rest } = prev; return rest }) }}
               placeholder="Describe the task..."
               rows={4}
-              className="resize-none bg-[var(--bg-surface)] border-[var(--border-default)]"
+              className={cn("resize-none bg-[var(--bg-surface)] border-[var(--border-default)]", errors.task && "border-[var(--error)]")}
             />
+            {errors.task && <p className="text-xs text-[var(--error)]">{errors.task}</p>}
           </div>
 
           {/* Autonomy */}

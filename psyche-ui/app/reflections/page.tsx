@@ -1,20 +1,29 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Search } from "lucide-react"
+import { Plus, Search, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ReflectionList } from "@/components/reflections/reflection-list"
 import { ReflectionReader } from "@/components/reflections/reflection-reader"
 import { ReflectionDiffHistory } from "@/components/reflections/reflection-diff-history"
 import { ReflectionEditor } from "@/components/reflections/reflection-editor"
+import { ReflectionSkeleton } from "@/components/reflections/reflection-skeleton"
 import { useReflectionStore } from "@/stores/reflection-store"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 export default function ReflectionsPage() {
+  const [loading, setLoading] = useState(true)
   const { reflections, selectedReflectionId, setSelectedReflection } = useReflectionStore()
   const [editorOpen, setEditorOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [debouncedSearch, setDebouncedSearch] = useState("")
+  const isMobile = useIsMobile()
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 100)
+    return () => clearTimeout(timer)
+  }, [])
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300)
@@ -31,10 +40,17 @@ export default function ReflectionsPage() {
 
   const selectedReflection = reflections.find((r) => r.id === selectedReflectionId)
 
+  // On mobile, when a reflection is selected, show the reader full-screen
+  const showMobileReader = isMobile && selectedReflection
+
+  if (loading) {
+    return <ReflectionSkeleton />
+  }
+
   if (reflections.length === 0) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-4">
-        <p className="text-sm text-[var(--text-muted)]">
+      <div className="flex h-full flex-col items-center justify-center gap-4 px-4">
+        <p className="text-center text-sm text-[var(--text-muted)]">
           No reflections yet. Agents will propose reflections as they make architectural decisions.
         </p>
         <Button
@@ -49,17 +65,43 @@ export default function ReflectionsPage() {
     )
   }
 
+  // Mobile: full-screen reader when a reflection is selected
+  if (showMobileReader) {
+    return (
+      <div className="flex h-full flex-col">
+        <div className="flex items-center gap-2 border-b border-[var(--border-subtle)] px-4 py-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-1.5 text-[var(--text-secondary)]"
+            onClick={() => setSelectedReflection(null)}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <span className="truncate text-sm font-medium text-[var(--text-primary)]">
+            {selectedReflection.title}
+          </span>
+        </div>
+        <div className="flex-1 overflow-hidden">
+          <ReflectionReader reflection={selectedReflection} />
+        </div>
+        <ReflectionEditor open={editorOpen} onOpenChange={setEditorOpen} />
+      </div>
+    )
+  }
+
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex items-center gap-3 border-b border-[var(--border-subtle)] px-6 py-3">
+      <div className="flex items-center gap-3 border-b border-[var(--border-subtle)] px-4 py-3 md:px-6">
         <Button
           onClick={() => setEditorOpen(true)}
           size="sm"
           className="bg-[var(--accent-primary)] text-[var(--text-inverse)] hover:bg-[var(--accent-hover)]"
         >
           <Plus className="mr-1.5 h-3.5 w-3.5" />
-          New Reflection
+          {isMobile ? "New" : "New Reflection"}
         </Button>
         <div className="relative max-w-xs flex-1">
           <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--text-muted)]" />
@@ -77,7 +119,7 @@ export default function ReflectionsPage() {
         {/* List */}
         <div
           className={`overflow-y-auto border-r border-[var(--border-subtle)] ${
-            selectedReflection ? "w-[320px] shrink-0" : "flex-1"
+            selectedReflection && !isMobile ? "w-[320px] shrink-0" : "flex-1"
           }`}
         >
           {filtered.length > 0 ? (
@@ -95,8 +137,8 @@ export default function ReflectionsPage() {
           )}
         </div>
 
-        {/* Reader + Diff History */}
-        {selectedReflection && (
+        {/* Reader + Diff History (desktop only when selected) */}
+        {selectedReflection && !isMobile && (
           <>
             <div className="flex-1 overflow-hidden border-r border-[var(--border-subtle)]">
               <ReflectionReader reflection={selectedReflection} />

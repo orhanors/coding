@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { useReflectionStore } from "@/stores/reflection-store"
+import { reflectionSchema } from "@/lib/validation"
 
 interface ReflectionEditorProps {
   open: boolean
@@ -24,16 +25,35 @@ export function ReflectionEditor({ open, onOpenChange }: ReflectionEditorProps) 
 
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   const nextNumber = Math.max(0, ...reflections.map((r) => r.number)) + 1
 
   const handleSubmit = () => {
-    if (!title.trim()) return
+    const contentValue = content.trim() || `# R-${String(nextNumber).padStart(3, "0")}: ${title.trim()}\n\n## Status\nProposed\n\n## Context\n\n## Decision\n\n## Consequences\n`
+    const result = reflectionSchema.safeParse({
+      title: title.trim(),
+      content: contentValue,
+    })
+
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {}
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as string
+        if (!fieldErrors[field]) {
+          fieldErrors[field] = issue.message
+        }
+      }
+      setErrors(fieldErrors)
+      return
+    }
+
+    setErrors({})
     addReflection({
       number: nextNumber,
-      title: title.trim(),
+      title: result.data.title,
       status: "proposed",
-      content: content.trim() || `# R-${String(nextNumber).padStart(3, "0")}: ${title.trim()}\n\n## Status\nProposed\n\n## Context\n\n## Decision\n\n## Consequences\n`,
+      content: result.data.content,
       author: "human",
       versions: [],
     })
@@ -44,9 +64,9 @@ export function ReflectionEditor({ open, onOpenChange }: ReflectionEditorProps) 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl border-[var(--border-default)] bg-[var(--bg-tertiary)] text-[var(--text-primary)]">
+      <DialogContent aria-labelledby="reflection-editor-title" className="max-w-xl border-[var(--border-default)] bg-[var(--bg-tertiary)] text-[var(--text-primary)]">
         <DialogHeader>
-          <DialogTitle>New Reflection</DialogTitle>
+          <DialogTitle id="reflection-editor-title">New Reflection</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -54,23 +74,25 @@ export function ReflectionEditor({ open, onOpenChange }: ReflectionEditorProps) 
             <Label>Title</Label>
             <Input
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => { setTitle(e.target.value); setErrors((prev) => { const { title: _, ...rest } = prev; return rest }) }}
               placeholder="Decision title..."
-              className="border-[var(--border-default)] bg-[var(--bg-secondary)]"
+              className={`border-[var(--border-default)] bg-[var(--bg-secondary)]${errors.title ? " border-[var(--error)]" : ""}`}
               maxLength={100}
             />
+            {errors.title && <p className="text-xs text-[var(--error)]">{errors.title}</p>}
           </div>
 
           <div className="space-y-2">
             <Label>Content (Markdown)</Label>
             <Textarea
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={(e) => { setContent(e.target.value); setErrors((prev) => { const { content: _, ...rest } = prev; return rest }) }}
               placeholder="## Context\n\n## Decision\n\n## Consequences"
-              className="border-[var(--border-default)] bg-[var(--bg-secondary)] font-mono text-xs"
+              className={`border-[var(--border-default)] bg-[var(--bg-secondary)] font-mono text-xs${errors.content ? " border-[var(--error)]" : ""}`}
               rows={15}
               maxLength={10000}
             />
+            {errors.content && <p className="text-xs text-[var(--error)]">{errors.content}</p>}
           </div>
         </div>
 

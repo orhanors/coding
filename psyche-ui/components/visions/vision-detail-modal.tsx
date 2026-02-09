@@ -46,9 +46,9 @@ export function VisionDetailModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={() => setSelectedVision(null)}>
-      <DialogContent className="max-w-2xl border-[var(--border-default)] bg-[var(--bg-tertiary)] text-[var(--text-primary)]">
+      <DialogContent aria-labelledby="vision-detail-title" className="max-w-2xl border-[var(--border-default)] bg-[var(--bg-tertiary)] text-[var(--text-primary)]">
         <DialogHeader>
-          <DialogTitle className="text-xl">{vision.title}</DialogTitle>
+          <DialogTitle id="vision-detail-title" className="text-xl">{vision.title}</DialogTitle>
           <div className="flex flex-wrap items-center gap-3 pt-1">
             {assignedAgent && (
               <span className="inline-flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">

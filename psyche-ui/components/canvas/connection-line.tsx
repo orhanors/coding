@@ -6,9 +6,10 @@ import { ARCHETYPES, AGENT_NODE_SIZE } from "@/lib/constants"
 interface ConnectionLinesProps {
   connections: ConnectionData[]
   agents: Agent[]
+  enhanced?: boolean
 }
 
-export function ConnectionLines({ connections, agents }: ConnectionLinesProps) {
+export function ConnectionLines({ connections, agents, enhanced }: ConnectionLinesProps) {
   const agentMap = new Map(agents.map((a) => [a.id, a]))
 
   return (
@@ -59,33 +60,37 @@ export function ConnectionLines({ connections, agents }: ConnectionLinesProps) {
 
         const isActive = source.status === "active" || conn.isActive
         const archetype = ARCHETYPES[source.archetype]
+        const isEnhanced = enhanced || false
 
         return (
           <g key={conn.id}>
             <path
               d={path}
               fill="none"
-              stroke={isActive ? archetype.colorHex : "var(--constellation-line)"}
-              strokeWidth={isActive ? 2 : 1.5}
-              strokeDasharray={isActive ? undefined : "6 4"}
-              strokeOpacity={isActive ? 0.8 : 0.5}
+              stroke={isActive || isEnhanced ? archetype.colorHex : "var(--constellation-line)"}
+              strokeWidth={isEnhanced ? 2.5 : isActive ? 2 : 1.5}
+              strokeDasharray={isActive || isEnhanced ? undefined : "6 4"}
+              strokeOpacity={isActive ? 0.8 : isEnhanced ? 0.7 : 0.5}
               markerEnd={`url(#arrow-${source.id})`}
               className={isActive ? "animate-connection-flow" : ""}
-              style={
-                isActive
+              style={{
+                ...(isActive
                   ? { strokeDasharray: "8 4", strokeDashoffset: 0 }
-                  : undefined
-              }
+                  : undefined),
+                ...(isEnhanced
+                  ? { filter: `drop-shadow(0 0 4px ${archetype.colorHex})` }
+                  : undefined),
+              }}
             />
-            {/* Active glow effect */}
-            {isActive && (
+            {/* Glow effect for active or enhanced (constellation) connections */}
+            {(isActive || isEnhanced) && (
               <path
                 d={path}
                 fill="none"
                 stroke={archetype.colorHex}
-                strokeWidth={4}
-                strokeOpacity={0.15}
-                style={{ filter: `blur(4px)` }}
+                strokeWidth={isEnhanced ? 6 : 4}
+                strokeOpacity={isEnhanced ? 0.12 : 0.15}
+                style={{ filter: `blur(${isEnhanced ? 6 : 4}px)` }}
               />
             )}
           </g>

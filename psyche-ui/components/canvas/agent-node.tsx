@@ -28,6 +28,7 @@ interface AgentNodeProps {
   onDrag?: (id: string, position: { x: number; y: number }) => void
   onConnectStart?: (id: string) => void
   canvasZoom: number
+  isTransitioning?: boolean
 }
 
 export function AgentNode({
@@ -38,6 +39,7 @@ export function AgentNode({
   onDrag,
   onConnectStart,
   canvasZoom,
+  isTransitioning,
 }: AgentNodeProps) {
   const nodeRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
@@ -161,6 +163,10 @@ export function AgentNode({
             : isError
             ? "var(--error)"
             : undefined,
+          // Constellation mode transition
+          ...(isTransitioning && {
+            transition: "left 300ms ease-out, top 300ms ease-out",
+          }),
           // For active glow animation
           ...(isActive && {
             "--agent-pulse": `${archetype.colorHex}66`,

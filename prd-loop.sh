@@ -265,13 +265,7 @@ while true; do
       echo "=== End PRD State ==="
     } >> "$SESSION_LOG"
 
-    # Ask user whether to continue
-    echo ""
-    read -rp "Continue to next cycle? (y/n): " ANSWER
-    if [[ "$ANSWER" != "y" && "$ANSWER" != "Y" ]]; then
-      log "Aborted by user."
-      break
-    fi
+    warn "Continuing to next cycle despite error..."
     continue
   fi
 
@@ -350,10 +344,12 @@ while true; do
       echo "=== End PRD State ==="
     } >> "$SESSION_LOG"
 
-    read -rp "Continue to next cycle? (y/n): " ANSWER
-    if [[ "$ANSWER" != "y" && "$ANSWER" != "Y" ]]; then
-      log "Aborted by user."
-      break
+    warn "Continuing to next cycle..."
+
+    # Delay before next cycle
+    if [[ "$DELAY" -gt 0 ]]; then
+      log "Waiting ${DELAY}s before next cycle... (Ctrl+C to stop)"
+      sleep "$DELAY"
     fi
   fi
 done

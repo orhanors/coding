@@ -44,8 +44,8 @@ export function DiffPreview({ hunks, className }: DiffPreviewProps) {
                 </span>
                 <span
                   className={cn(
-                    line.type === "added" && "underline decoration-[var(--diff-added-text)]/30",
-                    line.type === "removed" && "line-through decoration-[var(--diff-removed-text)]/30"
+                    line.type === "added" && "underline decoration-[var(--diff-added-text)]/70 decoration-2",
+                    line.type === "removed" && "line-through decoration-[var(--diff-removed-text)]/70 decoration-2"
                   )}
                 >
                   {line.content}

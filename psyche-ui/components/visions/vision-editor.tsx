@@ -23,6 +23,7 @@ import {
 import { ARCHETYPES } from "@/lib/constants"
 import { useVisionStore } from "@/stores/vision-store"
 import { useAgentStore } from "@/stores/agent-store"
+import { visionSchema } from "@/lib/validation"
 
 interface VisionEditorProps {
   open: boolean
@@ -37,12 +38,31 @@ export function VisionEditor({ open, onOpenChange }: VisionEditorProps) {
   const [overview, setOverview] = useState("")
   const [priority, setPriority] = useState<"low" | "medium" | "high">("medium")
   const [assignedAgent, setAssignedAgent] = useState<string>("")
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   const handleSubmit = () => {
-    if (!title.trim()) return
-    addVision({
+    const result = visionSchema.safeParse({
       title: title.trim(),
       overview: overview.trim(),
+      priority,
+    })
+
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {}
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as string
+        if (!fieldErrors[field]) {
+          fieldErrors[field] = issue.message
+        }
+      }
+      setErrors(fieldErrors)
+      return
+    }
+
+    setErrors({})
+    addVision({
+      title: result.data.title,
+      overview: result.data.overview,
       stage: "backlog",
       priority,
       assignedAgent: assignedAgent || undefined,
@@ -67,9 +87,9 @@ export function VisionEditor({ open, onOpenChange }: VisionEditorProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-[var(--border-default)] bg-[var(--bg-tertiary)] text-[var(--text-primary)]">
+      <DialogContent aria-labelledby="vision-editor-title" className="border-[var(--border-default)] bg-[var(--bg-tertiary)] text-[var(--text-primary)]">
         <DialogHeader>
-          <DialogTitle>New Vision</DialogTitle>
+          <DialogTitle id="vision-editor-title">New Vision</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -77,23 +97,25 @@ export function VisionEditor({ open, onOpenChange }: VisionEditorProps) {
             <Label>Title</Label>
             <Input
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => { setTitle(e.target.value); setErrors((prev) => { const { title: _, ...rest } = prev; return rest }) }}
               placeholder="What do you want to build?"
-              className="border-[var(--border-default)] bg-[var(--bg-secondary)]"
+              className={`border-[var(--border-default)] bg-[var(--bg-secondary)]${errors.title ? " border-[var(--error)]" : ""}`}
               maxLength={100}
             />
+            {errors.title && <p className="text-xs text-[var(--error)]">{errors.title}</p>}
           </div>
 
           <div className="space-y-2">
             <Label>Overview</Label>
             <Textarea
               value={overview}
-              onChange={(e) => setOverview(e.target.value)}
+              onChange={(e) => { setOverview(e.target.value); setErrors((prev) => { const { overview: _, ...rest } = prev; return rest }) }}
               placeholder="Describe the vision..."
-              className="border-[var(--border-default)] bg-[var(--bg-secondary)]"
+              className={`border-[var(--border-default)] bg-[var(--bg-secondary)]${errors.overview ? " border-[var(--error)]" : ""}`}
               rows={6}
               maxLength={5000}
             />
+            {errors.overview && <p className="text-xs text-[var(--error)]">{errors.overview}</p>}
           </div>
 
           <div className="space-y-2">

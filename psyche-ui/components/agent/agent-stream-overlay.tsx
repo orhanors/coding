@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { ARCHETYPES, AGENT_STATUSES } from "@/lib/constants"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { useUIStore } from "@/stores/ui-store"
 import { useAgentStore } from "@/stores/agent-store"
 import { AgentStreamContent } from "./agent-stream-content"
@@ -40,6 +41,7 @@ const ARCHETYPE_ICONS: Record<AgentArchetype, LucideIcon> = {
 }
 
 export function AgentStreamOverlay() {
+  const isMobile = useIsMobile()
   const { agentOverlayOpen, agentOverlayAgentId, toggleAgentOverlay } = useUIStore()
   const agents = useAgentStore((s) => s.agents)
 
@@ -55,7 +57,9 @@ export function AgentStreamOverlay() {
     <Sheet open={agentOverlayOpen} onOpenChange={() => toggleAgentOverlay()}>
       <SheetContent
         side="right"
-        className="w-[360px] border-l border-[var(--border-default)] bg-[var(--bg-secondary)] p-0"
+        role="complementary"
+        aria-label="Agent stream"
+        className={`border-l border-[var(--border-default)] bg-[var(--bg-secondary)] p-0 ${isMobile ? "w-full" : "w-[360px]"}`}
       >
         {agent && archetype ? (
           <div className="flex h-full flex-col">
@@ -89,6 +93,7 @@ export function AgentStreamOverlay() {
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label="Close agent panel"
                     className="h-6 w-6"
                     onClick={() => toggleAgentOverlay()}
                   >

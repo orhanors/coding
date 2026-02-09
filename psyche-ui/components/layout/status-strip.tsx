@@ -2,17 +2,23 @@
 
 import { useAgentStore } from "@/stores/agent-store"
 import { useUIStore } from "@/stores/ui-store"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { ARCHETYPES, APP_VERSION } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 
 export function StatusStrip() {
   const agents = useAgentStore((s) => s.agents)
   const toggleAgentOverlay = useUIStore((s) => s.toggleAgentOverlay)
+  const isMobile = useIsMobile()
 
   const activeAgent = agents.find((a) => a.status === "active")
   const pendingCount = agents.filter((a) => a.status === "idle").length
 
   const archetypeDef = activeAgent ? ARCHETYPES[activeAgent.archetype] : null
+
+  const truncatedName = activeAgent
+    ? activeAgent.name.replace(/^ψ[₁₂₃₄₅₆₇₈₉] /, "").slice(0, 20)
+    : null
 
   return (
     <footer
@@ -27,30 +33,35 @@ export function StatusStrip() {
       }}
     >
       {/* Left — Agent status */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 overflow-hidden">
         <span
           className={cn(
-            "h-2 w-2 rounded-full",
+            "h-2 w-2 shrink-0 rounded-full",
             activeAgent ? "animate-agent-pulse" : ""
           )}
           style={{
             backgroundColor: archetypeDef?.colorHex ?? "var(--text-muted)",
           }}
         />
-        <span className="text-[var(--text-secondary)]">
-          {activeAgent
-            ? `${activeAgent.name.replace(/^ψ[₁₂₃₄₅₆₇₈₉] /, "")}: ${activeAgent.task}...`
-            : "idle"}
+        <span className="truncate text-[var(--text-secondary)]" aria-live="polite">
+          {isMobile
+            ? (truncatedName ?? "idle")
+            : activeAgent
+              ? `${activeAgent.name.replace(/^ψ[₁₂₃₄₅₆₇₈₉] /, "")}: ${activeAgent.task}...`
+              : "idle"
+          }
         </span>
       </div>
 
-      {/* Right — Pending count + version */}
-      <div className="flex items-center gap-3 text-[var(--text-muted)]">
-        {pendingCount > 0 && (
-          <span>{pendingCount} pending</span>
-        )}
-        <span>v{APP_VERSION}</span>
-      </div>
+      {/* Right — Pending count + version (hidden on mobile) */}
+      {!isMobile && (
+        <div className="flex items-center gap-3 text-[var(--text-muted)]">
+          {pendingCount > 0 && (
+            <span>{pendingCount} pending</span>
+          )}
+          <span>v{APP_VERSION}</span>
+        </div>
+      )}
     </footer>
   )
 }

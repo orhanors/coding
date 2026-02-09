@@ -450,7 +450,7 @@ The tasks below are organized by phase and priority. Each phase builds on the pr
       "In constellation mode: agents cannot be freely dragged (disable drag handlers). Clicking still works to open config panel",
       "Verify: toggle to constellation mode → agents smoothly animate to auto-arranged positions based on dependency graph. Toggle back → agents return to original positions"
     ],
-    "implemented": false,
+    "implemented": true,
     "improvements": [],
     "improvements_done": false
   },
@@ -469,7 +469,7 @@ The tasks below are organized by phase and priority. Each phase builds on the pr
       "Prepare ToolLoopAgent pattern: create psyche-ui/lib/agents/agent-factory.ts stub that defines agent configurations with AI SDK v6 ToolLoopAgent — each archetype gets a system prompt, tool set, and needsApproval flag matching its autonomy level (1-3 = needsApproval:true, 4-5 = needsApproval:false). This is a scaffold for future real agent execution",
       "Verify: POST test event → appears in river. Agent stream overlay shows useChat output (mock or real). Agent factory creates ToolLoopAgent configurations"
     ],
-    "implemented": false,
+    "implemented": true,
     "improvements": [],
     "improvements_done": false
   },
@@ -489,7 +489,7 @@ The tasks below are organized by phase and priority. Each phase builds on the pr
       "Tablet adaptations (768-1024px): canvas agent nodes at 200×110px (slightly larger than desktop 180×100). Config panel overlays at 360px (same as desktop). Visions board: show 2 columns visible at a time with horizontal scroll for remaining 2. Reflections: split-view at 40/60 ratio instead of 50/50",
       "Test at 375px (iPhone), 768px (iPad portrait), 1024px (iPad landscape), and 1280px+ (desktop)"
     ],
-    "implemented": false,
+    "implemented": true,
     "improvements": [],
     "improvements_done": false
   },
@@ -507,7 +507,7 @@ The tasks below are organized by phase and priority. Each phase builds on the pr
       "Add shortcut hints to tooltips and command palette entries",
       "Verify: Tab through canvas nodes, arrow-key move, ⌘1-4 switch views, ⌘K opens palette, Escape cascading close, skip-to-content link works"
     ],
-    "implemented": false,
+    "implemented": true,
     "improvements": [],
     "improvements_done": false
   },
@@ -526,7 +526,7 @@ The tasks below are organized by phase and priority. Each phase builds on the pr
       "@media (prefers-reduced-motion: reduce): all slide/scale animations become instant opacity changes, glow pulses become static borders, connection animations stop (static dashed lines), skeleton shimmer stops (static bg)",
       "Verify: animations smooth at 60fps, reduced-motion settings respected, loading states appear briefly on initial mount"
     ],
-    "implemented": false,
+    "implemented": true,
     "improvements": [],
     "improvements_done": false
   },
@@ -643,16 +643,16 @@ The tasks below are organized by phase and priority. Each phase builds on the pr
 ## Progress Tracking
 
 - Total Tasks: 32
-- Completed: 21
+- Completed: 26
 - In Progress: 0
-- Not Started: 11
+- Not Started: 6
 
 ### Phase Breakdown
 
 - **Phase 1 — Foundation & Scaffolding** (9 tasks): 9/9 completed — Project setup + AI SDK v6 + AI Elements, design tokens, Tailwind config, types, constants, mock data, Zustand stores + hooks, app shell, command palette
 - **Phase 2 — Canvas Workspace** (6 tasks): 6/6 completed — Infinite canvas with pan/zoom, agent nodes with drag/glow, connection lines, config panel, toolbar, canvas page assembly
 - **Phase 3 — River & Documents** (6 tasks): 6/6 completed — River timeline components, river filters + page, vision board + cards, vision detail/list/editor, reflections browser (list + reader + diff history + editor), agent stream overlay (stream content + event log + controls)
-- **Phase 4 — Collaboration & Polish** (5 tasks): 0/5 completed — Constellation mode, AI SDK v6 streaming + ToolLoopAgent + SSE, responsive mobile + tablet, keyboard shortcuts, view transitions/loading states
+- **Phase 4 — Collaboration & Polish** (5 tasks): 5/5 completed — Constellation mode, AI SDK v6 streaming + ToolLoopAgent + SSE, responsive mobile + tablet, keyboard shortcuts, view transitions/loading states
 - **Phase 5 — Security Review** (1 task): 0/1 completed — Zod input validation, markdown sanitization, API protection, dependency audit, XSS testing
 - **Phase 6 — Testing & Quality** (3 tasks): 0/3 completed — Store unit tests, component tests, page-level integration tests
 - **Phase 7 — Accessibility & Documentation** (2 tasks): 0/2 completed — Full ARIA compliance, developer README

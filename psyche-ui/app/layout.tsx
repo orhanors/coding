@@ -43,6 +43,16 @@ export default function RootLayout({
       className={`${inter.variable} ${jetbrainsMono.variable} ${newsreader.variable}`}
     >
       <body className="font-sans antialiased">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[9999] focus:rounded-md focus:px-4 focus:py-2 focus:text-sm focus:font-medium"
+          style={{
+            backgroundColor: "var(--accent-primary)",
+            color: "var(--text-inverse)",
+          }}
+        >
+          Skip to content
+        </a>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <PsycheShell>{children}</PsycheShell>
         </ThemeProvider>

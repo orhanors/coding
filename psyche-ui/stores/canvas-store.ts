@@ -7,6 +7,7 @@ interface CanvasStore {
   mode: "canvas" | "constellation"
   selectedNodeId: string | null
   isDragging: boolean
+  freeformPositions: Map<string, { x: number; y: number }>
 
   setZoom: (level: number) => void
   setPan: (pan: { x: number; y: number }) => void
@@ -16,6 +17,7 @@ interface CanvasStore {
   resetView: () => void
   zoomIn: () => void
   zoomOut: () => void
+  saveFreeformPositions: (positions: Map<string, { x: number; y: number }>) => void
 }
 
 export const useCanvasStore = create<CanvasStore>()((set) => ({
@@ -24,6 +26,7 @@ export const useCanvasStore = create<CanvasStore>()((set) => ({
   mode: "canvas",
   selectedNodeId: null,
   isDragging: false,
+  freeformPositions: new Map(),
 
   setZoom: (level) => {
     set({ zoom: Math.max(CANVAS_MIN_ZOOM, Math.min(CANVAS_MAX_ZOOM, level)) })
@@ -59,5 +62,9 @@ export const useCanvasStore = create<CanvasStore>()((set) => ({
     set((s) => ({
       zoom: Math.max(CANVAS_MIN_ZOOM, s.zoom - 0.25),
     }))
+  },
+
+  saveFreeformPositions: (positions) => {
+    set({ freeformPositions: new Map(positions) })
   },
 }))
