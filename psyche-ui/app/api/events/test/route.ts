@@ -4,6 +4,14 @@ import type { PsycheEventType } from "@/lib/types"
 import { testEventSchema } from "@/lib/validation"
 
 export async function POST(request: Request) {
+  const contentType = request.headers.get("content-type")
+  if (!contentType || !contentType.includes("application/json")) {
+    return NextResponse.json(
+      { error: "Content-Type must be application/json" },
+      { status: 415 }
+    )
+  }
+
   try {
     const body = await request.json()
     const result = testEventSchema.safeParse(body)

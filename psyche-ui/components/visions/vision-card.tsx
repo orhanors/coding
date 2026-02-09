@@ -43,6 +43,9 @@ export function VisionCard({ vision, onClick, onDragStart }: VisionCardProps) {
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label={`${vision.title} — ${vision.priority} priority — ${vision.completedTasks}/${vision.totalTasks} tasks`}
       draggable
       onDragStart={(e) => {
         didDrag.current = true
@@ -56,6 +59,7 @@ export function VisionCard({ vision, onClick, onDragStart }: VisionCardProps) {
       onClick={() => {
         if (!didDrag.current) onClick()
       }}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (!didDrag.current) onClick() } }}
       className={`group cursor-pointer rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 transition-all duration-150 hover:-translate-y-px hover:border-[var(--border-strong)] hover:shadow-md ${
         isAgentActive ? "animate-pulse-subtle" : ""
       }`}
@@ -73,9 +77,11 @@ export function VisionCard({ vision, onClick, onDragStart }: VisionCardProps) {
           <>
             <span
               className="inline-block h-2 w-2 rounded-full"
+              aria-hidden="true"
               style={{ backgroundColor: archetype?.colorHex }}
             />
             <span className="truncate">{assignedAgent.name}</span>
+            <span className="sr-only">({archetype?.label})</span>
           </>
         ) : (
           <span>Unassigned</span>

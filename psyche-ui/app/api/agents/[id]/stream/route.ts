@@ -1,5 +1,7 @@
+import { NextResponse } from "next/server"
 import { ARCHETYPES } from "@/lib/constants"
 import type { AgentArchetype } from "@/lib/types"
+import { agentStreamSchema } from "@/lib/validation"
 
 export const dynamic = "force-dynamic"
 
@@ -9,10 +11,31 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const contentType = request.headers.get("content-type")
+  if (!contentType || !contentType.includes("application/json")) {
+    return NextResponse.json(
+      { error: "Content-Type must be application/json" },
+      { status: 415 }
+    )
+  }
+
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 })
+  }
+
+  const result = agentStreamSchema.safeParse(body)
+  if (!result.success) {
+    return NextResponse.json(
+      { error: "Invalid request body", details: result.error.flatten().fieldErrors },
+      { status: 400 }
+    )
+  }
+
   const { id } = await params
-  const body = await request.json()
-  const archetype = (body.archetype ?? "architect") as AgentArchetype
-  const archetypeDef = ARCHETYPES[archetype]
+  const archetype = (result.data.archetype ?? "architect") as AgentArchetype
 
   const encoder = new TextEncoder()
 

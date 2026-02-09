@@ -73,9 +73,9 @@ export function AgentControls({ agent }: AgentControlsProps) {
               Stop
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent className="border-[var(--border-default)] bg-[var(--bg-tertiary)]">
+          <AlertDialogContent aria-labelledby="stop-agent-title" className="border-[var(--border-default)] bg-[var(--bg-tertiary)]">
             <AlertDialogHeader>
-              <AlertDialogTitle>Stop this agent?</AlertDialogTitle>
+              <AlertDialogTitle id="stop-agent-title">Stop this agent?</AlertDialogTitle>
               <AlertDialogDescription>
                 This will stop {agent.name} from continuing its current task.
               </AlertDialogDescription>

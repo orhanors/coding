@@ -50,13 +50,14 @@ export function PsycheTopBar() {
             <Button
               variant="ghost"
               size="icon"
+              aria-label="Open navigation menu"
               className="h-8 w-8 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
             >
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[260px] bg-[var(--bg-secondary)] p-0">
-            <nav className="flex flex-col gap-1 px-4 pt-12">
+          <SheetContent side="left" aria-label="Navigation menu" className="w-[260px] bg-[var(--bg-secondary)] p-0">
+            <nav aria-label="Main navigation" className="flex flex-col gap-1 px-4 pt-12">
               {NAV_ITEMS.map((item) => {
                 const isActive = pathname === item.href
                 return (
@@ -114,7 +115,7 @@ export function PsycheTopBar() {
       ) : (
         <>
           {/* Center — Navigation */}
-          <nav className="flex items-center gap-1">
+          <nav aria-label="Main navigation" className="flex items-center gap-1">
             {NAV_ITEMS.map((item) => {
               const isActive = pathname === item.href
               return (

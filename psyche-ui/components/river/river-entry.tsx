@@ -30,10 +30,14 @@ export function RiverEntryItem({ entry }: RiverEntryItemProps) {
   return (
     <div className="group animate-timeline-entry">
       <div
+        role={isExpandable ? "button" : undefined}
+        aria-expanded={isExpandable ? isExpanded : undefined}
+        tabIndex={isExpandable ? 0 : undefined}
         className={`flex gap-3 rounded-lg px-3 py-2.5 transition-colors duration-150 ${
           isExpandable ? "cursor-pointer hover:bg-[var(--bg-hover)]" : ""
         }`}
         onClick={isExpandable ? () => setIsExpanded(!isExpanded) : undefined}
+        onKeyDown={isExpandable ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setIsExpanded(!isExpanded) } } : undefined}
       >
         {/* Timeline icon */}
         <div className="flex flex-col items-center pt-0.5">
@@ -65,9 +69,11 @@ export function RiverEntryItem({ entry }: RiverEntryItemProps) {
               <span className="inline-flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
                 <span
                   className="inline-block h-2 w-2 rounded-full"
+                  aria-hidden="true"
                   style={{ backgroundColor: ARCHETYPES[entry.agent.archetype].colorHex }}
                 />
                 ψ {entry.agent.name}
+                <span className="sr-only">({ARCHETYPES[entry.agent.archetype].label})</span>
               </span>
             )}
             {entry.stats && <DiffStatsBadge stats={entry.stats} />}

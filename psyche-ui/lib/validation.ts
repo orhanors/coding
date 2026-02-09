@@ -21,6 +21,12 @@ export const reflectionSchema = z.object({
   content: z.string().min(1, "Content is required").max(10000, "Content too long"),
 })
 
+// Agent stream request validation
+export const agentStreamSchema = z.object({
+  archetype: z.enum(["architect", "guardian", "explorer", "alchemist", "shadow", "sage", "herald", "trickster"]).optional(),
+  message: z.string().max(2000).optional(),
+})
+
 // SSE test event validation
 export const testEventSchema = z.object({
   type: z.string().min(1),

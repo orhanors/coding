@@ -71,7 +71,11 @@ export function ReflectionList({ reflections, selectedId, onSelect }: Reflection
                 return (
                   <div
                     key={r.id}
+                    role="button"
+                    tabIndex={0}
+                    aria-selected={isSelected}
                     onClick={() => onSelect(r.id)}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(r.id) } }}
                     className={`cursor-pointer rounded-lg px-3 py-2.5 transition-colors ${
                       isSelected
                         ? "bg-[var(--bg-active)]"
@@ -96,9 +100,11 @@ export function ReflectionList({ reflections, selectedId, onSelect }: Reflection
                         <span className="inline-flex items-center gap-1 text-xs text-[var(--text-secondary)]">
                           <span
                             className="inline-block h-1.5 w-1.5 rounded-full"
+                            aria-hidden="true"
                             style={{ backgroundColor: archetype?.colorHex }}
                           />
                           ψ {agent.name}
+                          <span className="sr-only">({archetype?.label})</span>
                         </span>
                       ) : (
                         <span className="text-xs text-[var(--text-muted)]">human</span>

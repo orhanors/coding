@@ -132,6 +132,7 @@ export function AgentConfigPanel({ defaultPosition }: { defaultPosition?: NewAge
     <Sheet open={open} onOpenChange={(v) => !v && closeConfigPanel()}>
       <SheetContent
         side={isMobile ? "bottom" : "right"}
+        aria-labelledby="agent-config-title"
         className={cn(
           "bg-[var(--bg-tertiary)]",
           isMobile
@@ -140,7 +141,7 @@ export function AgentConfigPanel({ defaultPosition }: { defaultPosition?: NewAge
         )}
       >
         <SheetHeader>
-          <SheetTitle className="text-[var(--text-primary)]">
+          <SheetTitle id="agent-config-title" className="text-[var(--text-primary)]">
             {isEditing ? "Edit Agent" : "Create Agent"}
           </SheetTitle>
         </SheetHeader>
@@ -249,6 +250,7 @@ export function AgentConfigPanel({ defaultPosition }: { defaultPosition?: NewAge
                     <Button
                       variant="ghost"
                       size="icon"
+                      aria-label={editAgent.status === "paused" ? "Resume agent" : "Pause agent"}
                       className="h-8 w-8"
                       onClick={() =>
                         setAgentStatus(
@@ -273,16 +275,16 @@ export function AgentConfigPanel({ defaultPosition }: { defaultPosition?: NewAge
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Button variant="ghost" size="icon" aria-label="Stop agent" className="h-8 w-8">
                           <Square className="h-4 w-4 text-[var(--error)]" />
                         </Button>
                       </AlertDialogTrigger>
                     </TooltipTrigger>
                     <TooltipContent>Stop</TooltipContent>
                   </Tooltip>
-                  <AlertDialogContent>
+                  <AlertDialogContent aria-labelledby="stop-agent-config-title">
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Stop this agent?</AlertDialogTitle>
+                      <AlertDialogTitle id="stop-agent-config-title">Stop this agent?</AlertDialogTitle>
                       <AlertDialogDescription>
                         This will stop the agent. In-progress work may be lost.
                       </AlertDialogDescription>
@@ -304,6 +306,7 @@ export function AgentConfigPanel({ defaultPosition }: { defaultPosition?: NewAge
                     <Button
                       variant="ghost"
                       size="icon"
+                      aria-label="Approve agent action"
                       className="h-8 w-8"
                     >
                       <CheckCheck className="h-4 w-4 text-[var(--accent-primary)]" />
@@ -333,9 +336,9 @@ export function AgentConfigPanel({ defaultPosition }: { defaultPosition?: NewAge
                     Delete
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent aria-labelledby="delete-agent-title">
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete this agent?</AlertDialogTitle>
+                    <AlertDialogTitle id="delete-agent-title">Delete this agent?</AlertDialogTitle>
                     <AlertDialogDescription>
                       This will remove the agent and all its connections.
                     </AlertDialogDescription>

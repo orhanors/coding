@@ -144,6 +144,7 @@ function PhaseSection({
     <div>
       <button
         onClick={() => setOpen(!open)}
+        aria-expanded={open}
         className="flex w-full items-center gap-2 rounded px-1 py-1 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
       >
         <ChevronRight

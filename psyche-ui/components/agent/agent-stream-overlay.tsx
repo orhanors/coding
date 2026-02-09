@@ -85,6 +85,7 @@ export function AgentStreamOverlay() {
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label="Minimize agent panel"
                     className="h-6 w-6"
                     onClick={() => toggleAgentOverlay()}
                   >
