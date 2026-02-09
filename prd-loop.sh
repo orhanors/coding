@@ -17,6 +17,7 @@ set -euo pipefail
 STYLE="phase"
 DELAY=10
 MAX_CYCLES=0  # 0 = unlimited
+DEBUG=false
 PRD_NUMBER=""
 
 # ── Colors ──────────────────────────────────────────────────────────────────
@@ -48,6 +49,7 @@ ${BOLD}OPTIONS:${NC}
   --style <task|phase>   Implementation style (default: phase)
   --delay <seconds>      Delay between cycles (default: 10)
   --max-cycles <n>       Maximum cycles to run, 0=unlimited (default: 0)
+  --debug                Print prompt, task selection details, and jq output
   -h, --help             Show this help message
 
 ${BOLD}EXAMPLES:${NC}
@@ -75,6 +77,16 @@ success() {
   echo -e "${GREEN}[OK]${NC} $1"
 }
 
+debug() {
+  if [[ "$DEBUG" == true ]]; then
+    echo -e "${YELLOW}[DEBUG]${NC} $1"
+  fi
+}
+
+extract_tasks_json() {
+  sed -n '/^```json$/,/^```$/p' "$1" | sed '1d;$d'
+}
+
 # ── Argument Parsing ────────────────────────────────────────────────────────
 if [[ $# -lt 1 ]]; then
   usage
@@ -96,6 +108,10 @@ while [[ $# -gt 0 ]]; do
     --max-cycles)
       MAX_CYCLES="$2"
       shift 2
+      ;;
+    --debug)
+      DEBUG=true
+      shift
       ;;
     *)
       if [[ -z "$PRD_NUMBER" ]]; then
@@ -215,18 +231,14 @@ echo -e "  Style:      ${CYAN}${STYLE}${NC}"
 echo -e "  Delay:      ${CYAN}${DELAY}s${NC} between cycles"
 echo -e "  Max cycles: ${CYAN}$([ "$MAX_CYCLES" -eq 0 ] && echo "unlimited" || echo "$MAX_CYCLES")${NC}"
 echo -e "  Log:        ${CYAN}${LOG_FILE}${NC}"
+echo -e "  Debug:      ${CYAN}${DEBUG}${NC}"
 echo -e "${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
-
-# ── Build Prompt ─────────────────────────────────────────────────────────────
-PROMPT="/implement-prd
-PRD_FILE=${PRD_BASENAME}
-METHOD=loop
-STYLE=${STYLE}"
 
 # ── Main Loop ────────────────────────────────────────────────────────────────
 CYCLE=0
 PREV_INCOMPLETE=-1
+PREV_COMPLETE=0
 STALE_CYCLES=0
 MAX_STALE=2  # Stop after this many consecutive cycles with no progress
 
@@ -241,6 +253,67 @@ while true; do
 
   echo ""
   log "${BOLD}━━━ Cycle $CYCLE ━━━${NC}"
+
+  # ── Task Selection via jq ──────────────────────────────────────────────
+  TASKS_JSON=$(extract_tasks_json "$PRD_FILE")
+  if ! echo "$TASKS_JSON" | jq '.' >/dev/null 2>&1; then
+    error "Failed to parse task JSON from PRD"; exit 1
+  fi
+
+  NEXT_PHASE=$(echo "$TASKS_JSON" | jq '[.[] | select(.implemented == false)] | [.[].phase] | unique | sort | first')
+  if [[ "$NEXT_PHASE" == "null" ]]; then
+    success "All tasks complete!"; break
+  fi
+
+  # Get incomplete tasks for this phase (with array indices)
+  PHASE_TASKS=$(echo "$TASKS_JSON" | jq --argjson p "$NEXT_PHASE" \
+    '[to_entries[] | select(.value.phase == $p and .value.implemented == false) | {index: .key, description: .value.description, steps: .value.steps}]')
+
+  # Style=task → only first task; Style=phase → all (sub-split if >4)
+  if [[ "$STYLE" == "task" ]]; then
+    PHASE_TASKS=$(echo "$PHASE_TASKS" | jq '.[0:1]')
+  elif [[ $(echo "$PHASE_TASKS" | jq 'length') -gt 4 ]]; then
+    PHASE_TASKS=$(echo "$PHASE_TASKS" | jq '.[0:4]')
+  fi
+
+  TASK_COUNT=$(echo "$PHASE_TASKS" | jq 'length')
+  TASK_INDICES=$(echo "$PHASE_TASKS" | jq -r '[.[].index] | map(tostring) | join(",")')
+  TASK_LIST=$(echo "$PHASE_TASKS" | jq -r '.[] | "- Task[\(.index)]: \(.description)"')
+  TASK_DETAILS=$(echo "$PHASE_TASKS" | jq -r '.[] | "### Task[\(.index)]: \(.description)\nSteps:\n" + (.steps | map("  - " + .) | join("\n")) + "\n"')
+
+  log "Phase ${NEXT_PHASE}: ${TASK_COUNT} task(s) selected [indices: ${TASK_INDICES}]"
+
+  debug "NEXT_PHASE=${NEXT_PHASE}"
+  debug "TASK_COUNT=${TASK_COUNT}"
+  debug "TASK_INDICES=${TASK_INDICES}"
+  debug "PHASE_TASKS=$(echo "$PHASE_TASKS" | jq -c '.')"
+
+  # ── Build Dynamic Scoped Prompt ──────────────────────────────────────────
+  PROMPT="/implement-prd
+PRD_FILE=${PRD_BASENAME}
+METHOD=loop
+STYLE=${STYLE}
+CYCLE=${CYCLE}
+PHASE=${NEXT_PHASE}
+TASK_INDICES=${TASK_INDICES}
+TASK_COUNT=${TASK_COUNT}
+
+## SCOPE CONSTRAINT — READ THIS FIRST
+You MUST implement ONLY the following ${TASK_COUNT} task(s) from Phase ${NEXT_PHASE}.
+Do NOT implement any other tasks. Do NOT look ahead to future phases.
+After completing these tasks, mark them as implemented, update the log, output CYCLE_COMPLETE, and stop.
+
+## Tasks for this cycle:
+${TASK_LIST}
+
+## Detailed steps:
+${TASK_DETAILS}"
+
+  if [[ "$DEBUG" == true ]]; then
+    echo -e "${YELLOW}[DEBUG] ── Prompt ──────────────────────────────────${NC}"
+    echo "$PROMPT"
+    echo -e "${YELLOW}[DEBUG] ── End Prompt ──────────────────────────────${NC}"
+  fi
 
   # Temp files go to .terminal-logs/ (gitignored)
   CYCLE_JSON="${TERMINAL_LOG_DIR}/${PRD_NUMBER}_cycle${CYCLE}.json"
@@ -283,6 +356,29 @@ while true; do
     STALE_CYCLES=0
   fi
   PREV_INCOMPLETE=$INCOMPLETE_COUNT
+
+  # ── Validate assigned tasks were marked done ────────────────────────────
+  POST_JSON=$(extract_tasks_json "$PRD_FILE")
+  for idx in $(echo "$TASK_INDICES" | tr ',' ' '); do
+    IS_DONE=$(echo "$POST_JSON" | jq --argjson i "$idx" '.[$i].implemented')
+    if [[ "$IS_DONE" != "true" ]]; then
+      warn "Task[$idx] was assigned but NOT marked as implemented"
+    fi
+  done
+
+  # Overreach detection
+  NEW_COMPLETE=$((TOTAL_COUNT - INCOMPLETE_COUNT))
+  EXPECTED=$((PREV_COMPLETE + TASK_COUNT))
+  debug "Overreach check: PREV_COMPLETE=${PREV_COMPLETE} TASK_COUNT=${TASK_COUNT} EXPECTED=${EXPECTED} NEW_COMPLETE=${NEW_COMPLETE}"
+  if [[ "$NEW_COMPLETE" -gt "$EXPECTED" ]]; then
+    warn "Agent completed more tasks than assigned (expected ${EXPECTED}, got ${NEW_COMPLETE})"
+  fi
+  PREV_COMPLETE=$NEW_COMPLETE
+
+  # Phase progress
+  log "Phase ${NEXT_PHASE}: $(echo "$POST_JSON" | jq --argjson p "$NEXT_PHASE" \
+    '[.[] | select(.phase == $p and .implemented == true)] | length')/$(echo "$POST_JSON" | jq --argjson p "$NEXT_PHASE" \
+    '[.[] | select(.phase == $p)] | length') tasks done"
 
   # ── Append cycle summary to log (skip if stale) ────────────────────────
   if [[ "$STALE_CYCLES" -eq 0 ]]; then
