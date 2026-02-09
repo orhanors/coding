@@ -226,6 +226,9 @@ STYLE=${STYLE}"
 
 # ── Main Loop ────────────────────────────────────────────────────────────────
 CYCLE=0
+PREV_INCOMPLETE=-1
+STALE_CYCLES=0
+MAX_STALE=2  # Stop after this many consecutive cycles with no progress
 
 while true; do
   CYCLE=$((CYCLE + 1))
@@ -247,9 +250,14 @@ while true; do
   log "Running claude with ${STYLE} style..."
   CYCLE_START=$(date +%s)
 
+  # Build claude command args (supports optional CLAUDE_MODEL env var)
+  CLAUDE_ARGS=(-p --verbose --dangerously-skip-permissions --output-format stream-json)
+  if [[ -n "${CLAUDE_MODEL:-}" ]]; then
+    CLAUDE_ARGS+=(--model "$CLAUDE_MODEL")
+  fi
+
   set +e
-  claude -p --verbose --dangerously-skip-permissions \
-    --output-format stream-json \
+  claude "${CLAUDE_ARGS[@]}" \
     "$PROMPT" 2>"$CYCLE_STDERR" \
     | grep --line-buffered '^{' \
     | tee "$CYCLE_JSON" \
@@ -263,20 +271,37 @@ while true; do
   CYCLE_END=$(date +%s)
   CYCLE_DURATION=$((CYCLE_END - CYCLE_START))
 
-  # Append cycle summary to the single log file
-  {
-    echo "## Session $(date '+%Y-%m-%d') — Cycle $CYCLE"
-    echo ""
-    echo "- **Start:** $(date -r "$CYCLE_START" '+%Y-%m-%d %H:%M:%S' 2>/dev/null || date '+%Y-%m-%d %H:%M:%S')"
-    echo "- **Duration:** ${CYCLE_DURATION}s"
-    echo "- **Style:** ${STYLE}"
-    echo "- **Exit code:** $EXIT_CODE"
-    echo ""
-    echo "$OUTPUT"
-    echo ""
-    echo "---"
-    echo ""
-  } >> "$LOG_FILE"
+  # ── Check PRD state (ground truth, independent of model signals) ─────────
+  INCOMPLETE_COUNT=$(grep -c '"implemented": false' "$PRD_FILE" 2>/dev/null || true)
+  TOTAL_COUNT=$(grep -c '"implemented":' "$PRD_FILE" 2>/dev/null || true)
+  COMPLETE_COUNT=$((TOTAL_COUNT - INCOMPLETE_COUNT))
+
+  # ── Stale cycle detection ──────────────────────────────────────────────
+  if [[ "$PREV_INCOMPLETE" -ge 0 && "$INCOMPLETE_COUNT" -eq "$PREV_INCOMPLETE" ]]; then
+    STALE_CYCLES=$((STALE_CYCLES + 1))
+  else
+    STALE_CYCLES=0
+  fi
+  PREV_INCOMPLETE=$INCOMPLETE_COUNT
+
+  # ── Append cycle summary to log (skip if stale) ────────────────────────
+  if [[ "$STALE_CYCLES" -eq 0 ]]; then
+    {
+      echo "## Session $(date '+%Y-%m-%d') — Cycle $CYCLE"
+      echo ""
+      echo "- **Start:** $(date -r "$CYCLE_START" '+%Y-%m-%d %H:%M:%S' 2>/dev/null || date '+%Y-%m-%d %H:%M:%S')"
+      echo "- **Duration:** ${CYCLE_DURATION}s"
+      echo "- **Style:** ${STYLE}"
+      echo "- **Exit code:** $EXIT_CODE"
+      echo ""
+      echo "$OUTPUT"
+      echo ""
+      echo "---"
+      echo ""
+    } >> "$LOG_FILE"
+  else
+    log "Skipping log append (no progress since last cycle)"
+  fi
 
   if [[ $EXIT_CODE -ne 0 ]]; then
     error "Claude CLI exited with code $EXIT_CODE"
@@ -286,49 +311,42 @@ while true; do
   fi
 
   log "Cycle $CYCLE completed in ${CYCLE_DURATION}s"
+  log "Progress: ${COMPLETE_COUNT}/${TOTAL_COUNT} tasks complete"
 
-  # Check for completion signals (look at the last few lines)
+  # ── Exit condition 1: PRD says all tasks are done ──────────────────────
+  if [[ "$INCOMPLETE_COUNT" -eq 0 ]]; then
+    echo ""
+    success "${BOLD}All tasks complete! (verified from PRD file)${NC}"
+    log "PRD $PRD_BASENAME is fully implemented."
+    break
+  fi
+
+  # ── Exit condition 2: stale — no progress for MAX_STALE consecutive cycles
+  if [[ "$STALE_CYCLES" -ge "$MAX_STALE" ]]; then
+    echo ""
+    warn "No progress for $STALE_CYCLES consecutive cycles. Stopping."
+    warn "Remaining: $INCOMPLETE_COUNT/$TOTAL_COUNT tasks incomplete."
+    warn "The model may not be following the loop protocol correctly."
+    break
+  fi
+
+  # ── Check for completion signals (informational) ───────────────────────
   LAST_LINES=$(echo "$OUTPUT" | tail -5)
 
   if echo "$LAST_LINES" | grep -q "ALL_TASKS_COMPLETE"; then
-    echo ""
-    success "${BOLD}All tasks complete!${NC}"
-    log "PRD $PRD_BASENAME is fully implemented."
-    break
+    # Signal says done but PRD disagrees (we already checked above)
+    warn "Model signaled ALL_TASKS_COMPLETE but $INCOMPLETE_COUNT tasks remain."
+    warn "Continuing..."
   elif echo "$LAST_LINES" | grep -q "CYCLE_COMPLETE"; then
     success "Cycle $CYCLE done. More tasks remain."
-
-    # Update remaining count
-    INCOMPLETE_COUNT=$(grep -c '"implemented": false' "$PRD_FILE" 2>/dev/null || true)
-    TOTAL_COUNT=$(grep -c '"implemented":' "$PRD_FILE" 2>/dev/null || true)
-    COMPLETE_COUNT=$((TOTAL_COUNT - INCOMPLETE_COUNT))
-    log "Progress: ${COMPLETE_COUNT}/${TOTAL_COUNT} tasks complete"
-
-    if [[ "$INCOMPLETE_COUNT" -eq 0 ]]; then
-      success "${BOLD}All tasks complete!${NC}"
-      break
-    fi
-
-    # Delay before next cycle
-    if [[ "$DELAY" -gt 0 ]]; then
-      log "Waiting ${DELAY}s before next cycle... (Ctrl+C to stop)"
-      sleep "$DELAY"
-    fi
   else
-    warn "No completion signal detected in output."
-    warn "Expected CYCLE_COMPLETE or ALL_TASKS_COMPLETE at end of response."
-    echo ""
-    echo "Last 5 lines of output:"
-    echo "$LAST_LINES"
-    echo ""
+    warn "No completion signal detected in output (model may not support loop protocol)."
+  fi
 
-    warn "Continuing to next cycle..."
-
-    # Delay before next cycle
-    if [[ "$DELAY" -gt 0 ]]; then
-      log "Waiting ${DELAY}s before next cycle... (Ctrl+C to stop)"
-      sleep "$DELAY"
-    fi
+  # ── Delay before next cycle ────────────────────────────────────────────
+  if [[ "$DELAY" -gt 0 ]]; then
+    log "Waiting ${DELAY}s before next cycle... (Ctrl+C to stop)"
+    sleep "$DELAY"
   fi
 done
 
